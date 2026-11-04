@@ -183,11 +183,17 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         add({ text: 'Starting Nmap 7.94 ( SIMULATED LAB BUILD )' }, { text: 'Host is up (0.012s simulated latency).' }, { text: 'PORT     STATE SERVICE  VERSION' }, { text: '22/tcp   open  ssh      OpenSSH 9.2' }, { text: '80/tcp   open  http     nginx 1.24.0' }, { text: '443/tcp  open  https    nginx 1.24.0' }, { text: '3000/tcp open  http     Node.js API (simulated)' }, { text: 'Scan complete: 1 host, 4 open ports.', tone: 'good' }); if (mission?.id === 'recon-01') mark(3);
       }
     } else if (lower.startsWith('curl ')) {
-      if (lower.includes('/api/docs') || lower.includes('staging.noname-logistics.test')) {
-        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'x-lab-route: /api/docs' }, { text: 'Simulovaná odpověď: API documentation is publicly accessible.', tone: 'warn' });
+      const allowedHost = ['staging.noname-logistics.test', 'portal.cloudnote.test', 'hooks.cloudnote.test', 'catalog.greencart.test', 'files.cloudnote.test'].some(host => lower.includes(host));
+      const headersOnly = /(^|\\s)-I(\\s|$)/i.test(command);
+      const docsPath = lower.includes('/api/docs');
+      if (!allowedHost) add({ text: 'curl: cíl není v inventáři izolované laboratoře.', tone: 'error' });
+      else if (headersOnly) {
+        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'date: Tue, 05 Nov 2026 21:04:15 GMT' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'content-length: 1842' }, { text: 'connection: keep-alive' }, { text: 'x-lab-route: /' });
+        if (mission?.id === 'web-02') mark(1);
+      } else if (docsPath) {
+        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'x-lab-route: /api/docs' }, { text: '--- RESPONSE BODY ---' }, { text: 'OpenAPI 3.0 · GET /api/v1/shipments/{id} · GET /api/v1/tracking/{code}', tone: 'warn' });
         if (mission?.id === 'web-02') mark(2);
-      } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
-      if (lower.includes('-i')) mark(1);
+      } else add({ text: 'HTTP/1.1 404 Not Found', tone: 'warn' }, { text: 'route not present in this application fixture' });
     } else if (lower.startsWith('api get /me') || lower.startsWith('curl /api/me')) {
       add({ text: 'HTTP/1.1 200 OK · account=researcher-a · role=customer', tone: 'good' }, { text: 'order_ids: [GC-1042] · owner: researcher-a' });
       if (mission?.id === 'idor-04') mark(0);
