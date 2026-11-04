@@ -7,7 +7,12 @@ type Line = { text: string; tone?: 'good' | 'warn' | 'error' | 'muted' };
 const missions: Mission[] = [
   { id: 'recon-01', title: 'První průzkum infrastruktury', brief: 'Zmapuj staging server logistické společnosti. Zjisti jeho adresu, dostupné porty a běžící služby. Nakonec ulož důkaz.', target: 'staging.noname-logistics.test', reward: 180, objectives: ['Zkontroluj identitu operátora (whoami).', 'Zjisti síťovou konfiguraci (ipconfig).', 'Vyřeš DNS záznam cíle (nslookup).', 'Proveď simulovaný scan portů a verzí (nmap).', 'Ulož důkaz do evidence.'] },
   { id: 'web-02', title: 'Odhalená API dokumentace', brief: 'Prověř webovou aplikaci. Najdi veřejně dostupnou dokumentaci API, vyhodnoť dopad a připrav bezpečnostní doporučení.', target: 'staging.noname-logistics.test', reward: 320, objectives: ['Otevři webový cíl v Browseru.', 'Prohlédni HTTP hlavičky (curl -I).', 'Najdi veřejnou dokumentaci (/api/docs).', 'Zaznamenej nález jako důkaz.', 'Odevzdej závěrečný report.'] },
-  { id: 'ir-03', title: 'Noční incident', brief: 'Vyšetři podezřelou aktivitu na pracovním serveru. Projdi dostupné logy, sestav časovou osu a identifikuj podezřelý proces.', target: 'workstation-07.lab', reward: 420, objectives: ['Otevři složku s incidentními logy.', 'Prohledej authentication.log.', 'Identifikuj podezřelý proces.', 'Vytvoř forenzní důkaz.', 'Odevzdej incidentní report.'] }
+  { id: 'ir-03', title: 'Noční incident', brief: 'Vyšetři podezřelou aktivitu na pracovním serveru. Projdi dostupné logy, sestav časovou osu a identifikuj podezřelý proces.', target: 'workstation-07.lab', reward: 420, objectives: ['Otevři složku s incidentními logy.', 'Prohledej authentication.log.', 'Identifikuj podezřelý proces.', 'Vytvoř forenzní důkaz.', 'Odevzdej incidentní report.'] },
+  { id: 'idor-04', title: 'Cizí zásilka', brief: 'Ověř autorizaci API v izolovaném e-shopu. Porovnej dva testovací účty a zjisti, zda lze zobrazit cizí objednávku.', target: 'api.greencart.test', reward: 360, objectives: ['Otevři API klienta a načti testovací profil.', 'Proveď požadavek na vlastní objednávku.', 'Porovnej autorizaci druhého testovacího účtu.', 'Ulož minimální důkaz bez citlivých dat.', 'Odevzdej report s opravou.'] },
+  { id: 'sqli-05', title: 'Podezřelý parametr', brief: 'Analyzuj chování parametru v lokální demonstrační aplikaci. Rozliš chybu validace od skutečného bezpečnostního dopadu.', target: 'catalog.greencart.test', reward: 440, objectives: ['Prohlédni endpoint katalogu.', 'Zkontroluj běžnou odpověď aplikace.', 'Spusť bezpečnou laboratorní kontrolu SQL indikátoru.', 'Vysvětli dopad a ulož důkaz.', 'Odevzdej report.'] },
+  { id: 'cloud-06', title: 'Veřejný sklad souborů', brief: 'Prověř fiktivní cloudové úložiště. Najdi veřejný bucket, zkontroluj metadata a navrhni bezpečnou konfiguraci.', target: 'files.cloudnote.test', reward: 520, objectives: ['Vyhledej informace o cloud storage v BH Search.', 'Proveď simulovanou kontrolu bucketu.', 'Zkontroluj veřejná oprávnění.', 'Ulož konfigurační důkaz.', 'Odevzdej doporučení.'] },
+  { id: 'wifi-07', title: 'Rádiové ticho', brief: 'Analyzuj připravený Wi-Fi capture a vysvětli, co lze a nelze z metadat handshake vyvodit.', target: 'wireless-lab.local', reward: 280, objectives: ['Otevři katalog wireless nástrojů.', 'Analyzuj syntetický handshake capture.', 'Prohlédni související pakety.', 'Ulož analytický záznam.', 'Odevzdej závěry.'] },
+  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] }
 ];
 
 const internetArticles = [
@@ -154,6 +159,42 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         if (mission?.id === 'web-02') mark(2);
       } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
       if (lower.includes('-i')) mark(1);
+    } else if (lower.startsWith('api get /me') || lower.startsWith('curl /api/me')) {
+      add({ text: 'HTTP/1.1 200 OK · account=researcher-a · role=customer', tone: 'good' }, { text: 'order_ids: [GC-1042] · owner: researcher-a' });
+      if (mission?.id === 'idor-04') mark(0);
+    } else if (lower.startsWith('api get /orders/')) {
+      const id = lower.split('/').pop();
+      if (id === 'gc-1042') {
+        add({ text: 'HTTP/1.1 200 OK · order=GC-1042 · owner=researcher-a', tone: 'good' });
+        if (mission?.id === 'idor-04') mark(1);
+      } else if (id === 'gc-2044') {
+        add({ text: 'HTTP/1.1 200 OK · order=GC-2044 · owner=researcher-b', tone: 'warn' }, { text: 'LAB FINDING: account A can read account B order. Synthetic record contains no real personal data.' });
+        if (mission?.id === 'idor-04') mark(2);
+      } else add({ text: 'HTTP/1.1 404 Not Found' });
+    } else if (lower === 'cloud-audit files.cloudnote.test') {
+      add({ text: 'CLOUD STORAGE CONFIG AUDIT · SIMULATED', tone: 'good' }, { text: 'Bucket: cloudnote-public-demo' }, { text: 'Public listing: ENABLED', tone: 'warn' }, { text: 'Write access: DISABLED' }, { text: 'Object metadata: sample-report.pdf · no user data' });
+      if (mission?.id === 'cloud-06') mark(1);
+    } else if (lower === 'cloud-acl cloudnote-public-demo') {
+      add({ text: 'ACL: READ=ANONYMOUS · WRITE=DENIED · LIST=ANONYMOUS', tone: 'warn' }, { text: 'Recommendation: disable public listing; grant least-privilege access.' });
+      if (mission?.id === 'cloud-06') mark(2);
+    } else if (lower === 'token inspect demo-token') {
+      add({ text: 'TOKEN: demo-token · issuer=cloudnote-lab · expires=never (fixture)', tone: 'warn' }, { text: 'Scopes: files:read · files:write · users:read · admin:settings', tone: 'warn' }, { text: 'Finding: excessive privileges and missing expiry in synthetic token.' });
+      if (mission?.id === 'api-08') mark(1);
+    } else if (lower === 'token explain') {
+      add({ text: 'Least privilege: issue only required scopes, set short expiry, rotate credentials and audit usage.' });
+      if (mission?.id === 'api-08') mark(2);
+    } else if (lower === 'sql-lab check catalog?id=1') {
+      add({ text: 'HTTP 200 · item=1 · query parameter accepted', tone: 'good' }, { text: 'Baseline response captured.' });
+      if (mission?.id === 'sqli-05') mark(1);
+    } else if (lower === 'sql-lab analyze') {
+      add({ text: 'SQLi LAB ANALYSIS · synthetic boolean differential detected', tone: 'warn' }, { text: 'True fixture: 200 / 1 result · False fixture: 200 / 0 results' }, { text: 'No payload sent to a real database. Confirm impact only in authorized environments.' });
+      if (mission?.id === 'sqli-05') mark(2);
+    } else if (lower === 'report draft') {
+      add({ text: 'REPORT DRAFT CREATED', tone: 'good' }, { text: 'Summary · affected asset · reproduction · impact · remediation' });
+      if (mission) mark(mission.objectives.length - 2);
+    } else if (lower === 'wireless summary') {
+      add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
+      if (mission?.id === 'wifi-07') mark(2);
     } else if (lower.startsWith('dig ') || lower.startsWith('whois ') || lower.startsWith('traceroute ')) {
       const host = command.split(/\s+/).pop() ?? 'staging.noname-logistics.test';
       if (!host.endsWith('.test') && !host.endsWith('.lab')) add({ text: 'Rozsah blokován: povoleny jsou pouze fiktivní lab domény.', tone: 'error' });
