@@ -126,7 +126,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
       if (lower.includes('-i')) mark(1);
     } else if (lower.startsWith('dig ') || lower.startsWith('whois ') || lower.startsWith('traceroute ')) {
-      const host = command.split(/\\s+/).pop() ?? 'staging.noname-logistics.test';
+      const host = command.split(/\s+/).pop() ?? 'staging.noname-logistics.test';
       if (!host.endsWith('.test') && !host.endsWith('.lab')) add({ text: 'Rozsah blokován: povoleny jsou pouze fiktivní lab domény.', tone: 'error' });
       else if (lower.startsWith('dig ')) add({ text: '; <<>> DiG SIMULATED <<>> ' + host }, { text: host + ' 60 IN A 10.20.0.24', tone: 'good' }, { text: 'DNSSEC: lab fixture · TTL: 60' });
       else if (lower.startsWith('whois ')) add({ text: 'Domain: ' + host }, { text: 'Registrant: NoName Logistics (fictional training data)' }, { text: 'Status: LAB-ONLY · No public registration lookup' });
