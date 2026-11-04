@@ -23,7 +23,9 @@ const internetArticles = [
   { title: 'IDOR a Broken Access Control', category: 'WEB VULNERABILITIES', tags: 'idor b access control authorization api object reference', excerpt: 'Jak chápat chyby autorizace a bezpečně ověřit oddělení uživatelských dat.', body: 'IDOR vzniká, když aplikace zpřístupní objekt podle identifikátoru bez kontroly oprávnění. V autorizovaném labu porovnej přístup dvou syntetických účtů. Nikdy nezkoušej cizí reálná data. Důkaz má ukazovat chybu autorizace, nikoliv obsah citlivých záznamů.' },
   { title: 'Subdomain enumeration – metodika', category: 'RECON', tags: 'recon dns subdomain enumeration nmap scope', excerpt: 'Pasivní a aktivní průzkum, DNS záznamy a kontrola rozsahu programu.', body: 'Začni rozsahem programu a pasivními zdroji. Každý nalezený hostname ověř proti scope. DNS záznam není automaticky povolením k testování. Eviduj zdroj objevu, čas a stav ověření.' },
   { title: 'Jak napsat kvalitní vulnerability report', category: 'REPORTING', tags: 'report cvss impact reproduction steps remediation', excerpt: 'Struktura reportu: shrnutí, dopad, reprodukce, důkaz a doporučená oprava.', body: 'Dobrý report obsahuje jasný titulek, stručné shrnutí, dotčené aktivum, předpoklady, kroky reprodukce v povoleném prostředí, očekávané a skutečné chování, bezpečný důkaz dopadu, závažnost s odůvodněním a návrh nápravy.' },
-  { title: 'Wi-Fi security: WPA2 handshake v PCAP', category: 'WIRELESS', tags: 'wifi wireless aircrack handshake pcap wpa2', excerpt: 'Co lze vyčíst z metadat zachyceného handshake a jak funguje laboratorní analýza.', body: 'Handshake je součást procesu navázání zabezpečeného spojení. V této výukové laboratoři analyzujeme pouze syntetický PCAP a metadata rámců. Skutečné zachytávání provozu a testování bez výslovného oprávnění není součástí cvičení.' }
+  { title: 'Wi-Fi security: WPA2 handshake v PCAP', category: 'WIRELESS', tags: 'wifi wireless aircrack handshake pcap wpa2', excerpt: 'Co lze vyčíst z metadat zachyceného handshake a jak funguje laboratorní analýza.', body: 'Handshake je součást procesu navázání zabezpečeného spojení. V této výukové laboratoři analyzujeme pouze syntetický PCAP a metadata rámců. Skutečné zachytávání provozu a testování bez výslovného oprávnění není součástí cvičení.' },
+  { title: 'SSRF: bezpečná validace webhook URL', category: 'WEB VULNERABILITIES', tags: 'ssrf webhook url validation redirect allowlist', excerpt: 'Proč je nutné ověřovat cílovou adresu, DNS odpovědi i každý redirect.', body: 'Server-Side Request Forgery (SSRF) může vzniknout, když server načítá URL dodanou uživatelem bez dostatečné kontroly. Obrana kombinuje allowlist důvěryhodných domén, blokování loopback/private/link-local rozsahů, kontrolu DNS po překladu, opakovanou validaci redirectů a omezení odchozí síťové komunikace. Samotná blokace textového řetězce nestačí.' },
+  { title: 'TLS hardening a bezpečnostní hlavičky', category: 'INFRASTRUCTURE', tags: 'tls ssl certificate hsts csp http headers', excerpt: 'Jak vyhodnotit zastaralé protokoly, platnost certifikátu a HSTS.', body: 'Moderní služba by měla zakázat TLS 1.0 a 1.1, podporovat TLS 1.2 a 1.3, automaticky obnovovat certifikáty a správně obsluhovat HTTPS. HSTS vynucuje HTTPS v prohlížeči, ale zapínej ho až po ověření celé domény a všech relevantních subdomén. Nález vždy posuzuj v kontextu skutečného dopadu.' }
 ];
 const bountyPrograms = [
   { name: 'NoName Logistics', domain: '*.noname-logistics.test', level: 'BEGINNER', reward: '100–800 XP', scope: 'Web portal, staging API, test accounts', description: 'Fiktivní logistická platforma. Nauč se hledat chyby v API, přístupových právech a konfiguraci.' },
@@ -146,7 +148,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         'aircrack-ng': 'Aircrack-ng zde pouze analyzuje syntetický capture a vysvětlí metadata handshake. Neprovádí zachytávání provozu ani lámání hesel.',
         wireshark: 'Wireshark je analyzátor paketů. V labu otevři připravený soubor: wireshark lab-traffic.pcap',
         sqlmap: 'sqlmap automatizuje testování SQL injection. Tato mise pouze vysvětluje indikátory na syntetické odpovědi.',
-        john: 'John the Ripper umí auditovat heslové hashe. Zde pracuje jen s demonstrační sadou: john --show lab-demo-hashes.txt'
+        john: 'John the Ripper umí auditovat heslové hashe. Zde pracuje jen s demonstrační sadou: john --show lab-demo-hashes.txt',
+        testssl: 'Testssl kontroluje TLS protokoly a konfiguraci certifikátu. V této hře používá pouze syntetický profil: testssl portal.cloudnote.test',
+        'ssrf-lab': 'Výukový validátor webhook URL. Neodesílá síťové požadavky: ssrf-lab check webhook-target'
       };
       add({ text: descriptions[name] ?? 'Nástroj není v rychlé nápovědě. Otevři toolkit a vyber kategorii.', tone: descriptions[name] ? 'good' : 'warn' });
     } else if (lower === 'whoami') {
@@ -209,6 +213,11 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'ssrf-lab policy') {
       add({ text: 'SANDBOX EGRESS POLICY', tone: 'good' }, { text: 'Default: DENY · Allowlist: approved webhook provider domains only' }, { text: 'Required controls: block loopback, private, link-local and metadata ranges; re-resolve and validate every redirect; enforce egress firewall.' });
       if (mission?.id === 'ssrf-09') mark(2);
+    } else if (lower.startsWith('testssl ')) {
+      add({ text: 'testssl.sh · SYNTHETIC TLS PROFILE', tone: 'good' }, { text: 'TLS 1.0: offered (legacy protocol)', tone: 'warn' }, { text: 'TLS 1.2 / TLS 1.3: supported' }, { text: 'Certificate fixture: valid · renewal window: 21 days' }, { text: 'No remote host was contacted.', tone: 'muted' });
+      if (mission?.id === 'tls-10') mark(0);
+    } else if (lower.startsWith('httpx ')) {
+      add({ text: 'httpx · LOCAL INVENTORY FIXTURE', tone: 'good' }, { text: 'https://portal.cloudnote.test [200] [CloudNote Portal]' }, { text: 'Technology hints: nginx · TLS enabled · no live probe performed' });
     } else if (lower === 'tls-audit portal.cloudnote.test') {
       add({ text: 'TLS CONFIGURATION AUDIT · SYNTHETIC FIXTURE', tone: 'good' }, { text: 'TLS 1.0: ENABLED (legacy)', tone: 'warn' }, { text: 'TLS 1.2: ENABLED · TLS 1.3: ENABLED' }, { text: 'Certificate: valid in lab fixture · expires in 21 days' });
       if (mission?.id === 'tls-10') mark(0);
