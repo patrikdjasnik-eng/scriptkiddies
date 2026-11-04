@@ -1,4 +1,5 @@
 #Script kiddies 🥱
+<img width="1919" height="987" alt="image" src="https://github.com/user-attachments/assets/1614927d-0f01-488b-baed-9c97be2405c1" />
 
 <p align="center">
   <strong>Learn bug bounty hunting by doing the work.</strong><br />
