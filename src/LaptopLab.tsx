@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X, Settings, Volume2, BatteryFull, Grid3X3 } from 'lucide-react';
+import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X, Volume2, BatteryFull, Grid3X3 } from 'lucide-react';
 
 type AppId = 'powershell' | 'editor' | 'browser' | 'files' | 'knowledge' | 'monitor' | 'toolkit' | 'help' | 'search' | 'bounty';
 type Mission = { id: string; title: string; brief: string; target: string; reward: number; objectives: string[] };
