@@ -12,7 +12,9 @@ const missions: Mission[] = [
   { id: 'sqli-05', title: 'Podezřelý parametr', brief: 'Analyzuj chování parametru v lokální demonstrační aplikaci. Rozliš chybu validace od skutečného bezpečnostního dopadu.', target: 'catalog.greencart.test', reward: 440, objectives: ['Prohlédni endpoint katalogu.', 'Zkontroluj běžnou odpověď aplikace.', 'Spusť bezpečnou laboratorní kontrolu SQL indikátoru.', 'Vysvětli dopad a ulož důkaz.', 'Odevzdej report.'] },
   { id: 'cloud-06', title: 'Veřejný sklad souborů', brief: 'Prověř fiktivní cloudové úložiště. Najdi veřejný bucket, zkontroluj metadata a navrhni bezpečnou konfiguraci.', target: 'files.cloudnote.test', reward: 520, objectives: ['Vyhledej informace o cloud storage v BH Search.', 'Proveď simulovanou kontrolu bucketu.', 'Zkontroluj veřejná oprávnění.', 'Ulož konfigurační důkaz.', 'Odevzdej doporučení.'] },
   { id: 'wifi-07', title: 'Rádiové ticho', brief: 'Analyzuj připravený Wi-Fi capture a vysvětli, co lze a nelze z metadat handshake vyvodit.', target: 'wireless-lab.local', reward: 280, objectives: ['Otevři katalog wireless nástrojů.', 'Analyzuj syntetický handshake capture.', 'Prohlédni související pakety.', 'Ulož analytický záznam.', 'Odevzdej závěry.'] },
-  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] }
+  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] },
+  { id: 'ssrf-09', title: 'Webhook mimo kontrolu', brief: 'Prověř validaci URL u demonstrační webhook služby. Rozpoznej nebezpečnou důvěru v uživatelský vstup a navrhni ochranu proti SSRF.', target: 'hooks.cloudnote.test', reward: 560, objectives: ['Otevři dokumentaci webhook služby.', 'Proveď bezpečnou kontrolu URL validátoru.', 'Prohlédni síťovou politiku sandboxu.', 'Ulož důkaz bez odesílání požadavku.', 'Odevzdej doporučení.'] },
+  { id: 'tls-10', title: 'Slabé místo v TLS', brief: 'Zkontroluj TLS konfiguraci fiktivního portálu. Vyhodnoť protokoly, certifikát a bezpečnostní hlavičky.', target: 'portal.cloudnote.test', reward: 380, objectives: ['Spusť kontrolu TLS profilu.', 'Zkontroluj HTTP bezpečnostní hlavičky.', 'Vyhodnoť doporučenou konfiguraci.', 'Ulož konfigurační důkaz.', 'Odevzdej report.'] }
 ];
 
 const internetArticles = [
@@ -53,6 +55,11 @@ const toolGroups = [
     { name: 'burpsuite', summary: 'Prohlížení zachyceného HTTP požadavku', example: 'burpsuite --open lab-request' },
     { name: 'ffuf', summary: 'Fuzzing cest z bezpečného slovníku v labu', example: 'ffuf -w common.txt -u https://staging.noname-logistics.test/FUZZ' },
     { name: 'semgrep', summary: 'Statická analýza ukázkového zdrojového kódu', example: 'semgrep --config auto ./demo-app' }
+  ]},
+  { title: 'WEB & INFRASTRUCTURE HARDENING', tools: [
+    { name: 'testssl', summary: 'Audit TLS profilu syntetického endpointu', example: 'testssl portal.cloudnote.test' },
+    { name: 'httpx', summary: 'Kontrola HTTP metadat v inventáři labu', example: 'httpx -u https://portal.cloudnote.test -title -status-code' },
+    { name: 'ssrf-lab', summary: 'Kontrola URL validace bez odeslání požadavků', example: 'ssrf-lab check webhook-target' }
   ]},
   { title: 'WIRELESS & FORENSICS', tools: [
     { name: 'aircrack-ng', summary: 'Analýza metadat syntetického Wi-Fi capture', example: 'aircrack-ng --analyze lab-handshake.cap' },
@@ -115,7 +122,8 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     add({ text: prompt + command, tone: 'good' });
     const lower = command.toLowerCase();
     if (lower === 'help' || lower === 'get-help') {
-      add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
+      add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite · testssl · httpx' },
+      { text: 'ssrf-lab · cloud-audit · token inspect · sql-lab' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
     } else if (lower === 'toolkit') {
       setActiveApp('toolkit');
       add({ text: 'Otevírám katalog výukových nástrojů.', tone: 'good' }); if (mission?.id === 'wifi-07') mark(0);
@@ -192,6 +200,24 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'token explain') {
       add({ text: 'Least privilege: issue only required scopes, set short expiry, rotate credentials and audit usage.' });
       if (mission?.id === 'api-08') mark(2);
+    } else if (lower === 'webhook docs') {
+      add({ text: 'WEBHOOK SERVICE GUIDE · SIMULATED', tone: 'good' }, { text: 'Endpoint accepts a destination URL and schedules an outbound callback.' }, { text: 'Security note: destination validation must run after canonicalization and on every redirect.' });
+      if (mission?.id === 'ssrf-09') mark(0);
+    } else if (lower === 'ssrf-lab check webhook-target') {
+      add({ text: 'URL VALIDATION FIXTURE · NO NETWORK REQUEST SENT', tone: 'good' }, { text: 'Input profile: redirect-aware validation = DISABLED', tone: 'warn' }, { text: 'Finding: validator checks the initial hostname but does not re-check redirect destinations.' }, { text: 'Impact depends on reachable internal services; this lab does not access any internal address.' });
+      if (mission?.id === 'ssrf-09') mark(1);
+    } else if (lower === 'ssrf-lab policy') {
+      add({ text: 'SANDBOX EGRESS POLICY', tone: 'good' }, { text: 'Default: DENY · Allowlist: approved webhook provider domains only' }, { text: 'Required controls: block loopback, private, link-local and metadata ranges; re-resolve and validate every redirect; enforce egress firewall.' });
+      if (mission?.id === 'ssrf-09') mark(2);
+    } else if (lower === 'tls-audit portal.cloudnote.test') {
+      add({ text: 'TLS CONFIGURATION AUDIT · SYNTHETIC FIXTURE', tone: 'good' }, { text: 'TLS 1.0: ENABLED (legacy)', tone: 'warn' }, { text: 'TLS 1.2: ENABLED · TLS 1.3: ENABLED' }, { text: 'Certificate: valid in lab fixture · expires in 21 days' });
+      if (mission?.id === 'tls-10') mark(0);
+    } else if (lower === 'tls-audit headers portal.cloudnote.test') {
+      add({ text: 'HTTP SECURITY HEADERS · SYNTHETIC FIXTURE', tone: 'good' }, { text: 'Strict-Transport-Security: MISSING', tone: 'warn' }, { text: 'Content-Security-Policy: present · X-Content-Type-Options: nosniff' });
+      if (mission?.id === 'tls-10') mark(1);
+    } else if (lower === 'tls-audit explain') {
+      add({ text: 'HARDENING: disable TLS 1.0/1.1, prefer TLS 1.2/1.3, automate certificate renewal and add HSTS after validating HTTPS coverage.' });
+      if (mission?.id === 'tls-10') mark(2);
     } else if (lower === 'sql-lab check catalog?id=1') {
       add({ text: 'HTTP 200 · item=1 · query parameter accepted', tone: 'good' }, { text: 'Baseline response captured.' });
       if (mission?.id === 'sqli-05') mark(1);
@@ -259,7 +285,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       if (mission?.id === 'recon-01') mark(4);
       if (mission?.id === 'web-02' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'api-08' || mission?.id === 'wifi-07') mark(3);
       if (mission?.id === 'ir-03') mark(3);
-      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08') mark(3);
+      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08' || mission?.id === 'ssrf-09' || mission?.id === 'tls-10') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
