@@ -136,7 +136,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     const lower = command.toLowerCase();
     if (lower === 'help' || lower === 'get-help') {
       add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite · testssl · httpx' },
-      { text: 'ssrf-lab · cloud-audit · token inspect · sql-lab' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
+      { text: 'ssrf-lab · cloud-audit · token inspect · sql-lab' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'evidence add <název> · evidence list · report draft · report validate · submit' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
     } else if (lower === 'toolkit') {
       setActiveApp('toolkit');
       add({ text: 'Otevírám katalog výukových nástrojů.', tone: 'good' }); if (mission?.id === 'wifi-07') mark(0);
@@ -327,12 +327,20 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'cat authentication.log' || lower === 'get-content logs/authentication.log') {
       add({ text: '21:04:12 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:04:18 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:05:02 AUTH_SUCCESS user=svc_backup src=10.20.0.44', tone: 'warn' });
       if (mission?.id === 'ir-03') mark(1);
+    } else if (lower === 'get-content notes.txt' || lower === 'cat notes.txt') {
+      add({ text: 'OPERATOR NOTES · TRAINING WORKSTATION', tone: 'good' }, { text: 'Incident window: 21:04–21:06 UTC' }, { text: 'Preserve source artifacts. Record timestamps, source paths and SHA-256 hashes before analysis.' });
+    } else if (lower === 'get-content logs/updater_tmp.log' || lower === 'cat logs/updater_tmp.log') {
+      add({ text: '21:03:58 process_start name=updater_tmp.exe pid=4088 user=svc_backup', tone: 'warn' }, { text: '21:04:02 outbound_connection dst=198.51.100.24:443 process=updater_tmp.exe' }, { text: '21:05:02 auth_success user=svc_backup src=10.20.0.44' });
+      if (mission?.id === 'ir-03') mark(2);
+    } else if (lower === 'get-content recon.ps1' || lower === 'cat recon.ps1') {
+      add({ text: 'Write-Host "Starting reconnaissance..."' }, { text: '$target = "staging.noname-logistics.test"' }, { text: 'Write-Host "Target: $target"' }, { text: '# Resolve-DnsName $target' });
     } else if (lower === 'get-process' || lower === 'ps') {
       add({ text: 'ProcessName       Id     CPU' }, { text: 'explorer          1840   00:01' }, { text: 'powershell        2912   00:02' }, { text: 'updater_tmp       4088   18:42', tone: 'warn' });
       if (mission?.id === 'ir-03') mark(2);
     } else if (lower.startsWith('evidence add ')) {
       const name = command.slice(13).trim() || 'unnamed-evidence';
-      setEvidence(old => old.includes(name) ? old : [...old, name]);
+      if (!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(name)) { add({ text: 'Neplatný název důkazu. Použij 1–64 znaků: písmena, čísla, tečku, pomlčku nebo podtržítko.', tone: 'error' }); return; }
+      setEvidence(old => old.includes(name) ? old : [...old, name]); setReportValidated(false);
       add({ text: 'Evidence uložen: ' + name, tone: 'good' });
       if (mission?.id === 'recon-01') mark(4);
       if (mission?.id === 'web-02' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'api-08' || mission?.id === 'wifi-07') mark(3);
@@ -341,7 +349,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (!evidence.length || !reportDrafted || !reportValidated) add({ text: 'Odevzdání zamítnuto: potřebuješ důkazy, draft a úspěšnou validaci. Použij evidence list, report draft a report validate.', tone: 'warn' });
-      else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= (mission.id === 'recon-01' ? mission.objectives.length - 1 : mission.objectives.length - 1)) {
+      else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
         if (submitted.includes(mission.id)) { add({ text: 'Tato mise už byla odevzdána.', tone: 'warn' }); return; }
         mark(mission.objectives.length - 1);
         setSubmitted(old => [...old, mission.id]);
