@@ -2,7 +2,7 @@
 
 ## Pevný limit
 
-Maximální velikost jednoho distribuovaného balíčku Bounty Hunter je **10 GiB (10 737 418 240 bajtů)**. Jde o horní hranici, nikoli o cílovou velikost. Hra má zůstat co nejmenší při zachování kvality.
+Maximální velikost jednoho distribuovaného balíčku Bounty Hunter je **10 GB (10 000 000 000 bajtů)**. Jde o horní hranici, nikoli o cílovou velikost. Hra má zůstat co nejmenší při zachování kvality.
 
 Kontrola v této fázi měří produkční adresář `dist/`. Nezahrnuje Node.js, vývojové závislosti ani soubory repozitáře. Pokud později přidáme volitelný stahovatelný obsah (DLC), musí mít vlastní transparentní rozpočet a nesmí se potichu započítávat do základní instalace.
 
@@ -10,14 +10,14 @@ Kontrola v této fázi měří produkční adresář `dist/`. Nezahrnuje Node.js
 
 | Oblast | Rozpočet |
 |---|---:|
-| Engine a rozhraní | 0,5 GiB |
-| Prostředí a textury | 2 GiB |
-| Simulovaná infrastruktura | 1,5 GiB |
-| Mise a příběh | 1 GiB |
-| Zvuk | 1 GiB |
-| Modely a animace | 2 GiB |
-| Rezerva | 2 GiB |
-| **Celkem** | **10 GiB** |
+| Engine a rozhraní | 0,5 GB |
+| Prostředí a textury | 2 GB |
+| Simulovaná infrastruktura | 1,5 GB |
+| Mise a příběh | 1 GB |
+| Zvuk | 1 GB |
+| Modely a animace | 2 GB |
+| Rezerva | 2 GB |
+| **Celkem** | **10 GB** |
 
 Rozpočty oblastí jsou plánovací stropy. Neznamenají, že se mají všechny naplnit, a jejich součet nesmí vést k překročení distribučního limitu.
 
@@ -32,7 +32,7 @@ Rozpočty oblastí jsou plánovací stropy. Neznamenají, že se mají všechny 
 
 ## Automatická kontrola
 
-`npm run build` po vytvoření produkčního balíčku spustí kontrolu velikosti. Při překročení 80 % limitu vypíše varování; při překročení 10 GiB skončí chybou.
+`npm run build` po vytvoření produkčního balíčku spustí kontrolu velikosti. Při překročení 80 % limitu vypíše varování; při překročení 10 GB skončí chybou.
 
 Samostatně lze kontrolu spustit příkazem:
 
