@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { readdir, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 const root = path.resolve(process.argv[2] ?? 'dist');
 const configPath = path.resolve('game.config.json');
-const config = JSON.parse(await (await import('node:fs/promises')).readFile(configPath, 'utf8'));
+const config = JSON.parse(await readFile(configPath, 'utf8'));
 const limit = config.distribution.maxInstallBytes;
 const warningAt = Math.floor(limit * config.distribution.warningThreshold);
 
@@ -36,7 +36,7 @@ try {
 
 const total = files.reduce((sum, file) => sum + file.bytes, 0);
 const gib = value => (value / 1024 ** 3).toFixed(2);
-console.log(`\\nBOUNTY HUNTER — PACKAGE SIZE\\nDirectory: ${root}\\nFiles: ${files.length}\\nTotal: ${gib(total)} GiB / ${gib(limit)} GiB`);
+console.log(`\nBOUNTY HUNTER — PACKAGE SIZE\nDirectory: ${root}\nFiles: ${files.length}\nTotal: ${gib(total)} GiB / ${gib(limit)} GiB`);
 
 if (total > warningAt) console.warn(`WARNING: package exceeds ${Math.round(config.distribution.warningThreshold * 100)}% of the 10 GiB budget.`);
 if (total > limit) {
@@ -47,7 +47,7 @@ if (total > limit) {
 }
 
 if (files.length) {
-  console.log('\\nLargest files:');
+  console.log('\nLargest files:');
   for (const file of files.sort((a, b) => b.bytes - a.bytes).slice(0, 10)) {
     console.log(`  ${gib(file.bytes)} GiB  ${file.path}`);
   }
