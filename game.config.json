@@ -1,18 +1,18 @@
 {
   "version": 1,
   "distribution": {
-    "maxInstallBytes": 10737418240,
+    "maxInstallBytes": 10000000000,
     "warningThreshold": 0.8,
     "measuredDirectory": "dist",
-    "description": "Maximum packaged game size: 10 GiB. Optional downloadable content is budgeted separately and must be disclosed to the player."
+    "description": "Maximum packaged game size: 10 GB (10,000,000,000 bytes). Optional downloadable content is budgeted separately and must be disclosed to the player."
   },
   "contentBudgetsBytes": {
-    "engineAndInterface": 536870912,
-    "worldsAndTextures": 2147483648,
-    "simulatedInfrastructure": 1610612736,
-    "missionsAndStory": 1073741824,
-    "audio": 1073741824,
-    "modelsAndAnimations": 2147483648,
-    "futureReserve": 2147483648
+    "engineAndInterface": 500000000,
+    "worldsAndTextures": 2000000000,
+    "simulatedInfrastructure": 1500000000,
+    "missionsAndStory": 1000000000,
+    "audio": 1000000000,
+    "modelsAndAnimations": 2000000000,
+    "futureReserve": 2000000000
   }
 }
