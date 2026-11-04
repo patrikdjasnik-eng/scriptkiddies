@@ -36,11 +36,11 @@ try {
 
 const total = files.reduce((sum, file) => sum + file.bytes, 0);
 const gib = value => (value / 1_000_000_000).toFixed(2);
-console.log(`\nBOUNTY HUNTER — PACKAGE SIZE\nDirectory: ${root}\nFiles: ${files.length}\nTotal: ${gib(total)} GB / ${gib(limit)} GiB`);
+console.log(`\nBOUNTY HUNTER — PACKAGE SIZE\nDirectory: ${root}\nFiles: ${files.length}\nTotal: ${gib(total)} GB / ${gib(limit)} GB`);
 
-if (total > warningAt) console.warn(`WARNING: package exceeds ${Math.round(config.distribution.warningThreshold * 100)}% of the 10 GiB budget.`);
+if (total > warningAt) console.warn(`WARNING: package exceeds ${Math.round(config.distribution.warningThreshold * 100)}% of the 10 GB budget.`);
 if (total > limit) {
-  console.error('FAILED: packaged game exceeds the 10 GiB maximum.');
+  console.error('FAILED: packaged game exceeds the 10 GB maximum.');
   process.exitCode = 1;
 } else {
   console.log('PASS: packaged game is within the size budget.');
@@ -49,6 +49,6 @@ if (total > limit) {
 if (files.length) {
   console.log('\nLargest files:');
   for (const file of files.sort((a, b) => b.bytes - a.bytes).slice(0, 10)) {
-    console.log(`  ${gib(file.bytes)} GiB  ${file.path}`);
+    console.log(`  ${gib(file.bytes)} GB  ${file.path}`);
   }
 }
