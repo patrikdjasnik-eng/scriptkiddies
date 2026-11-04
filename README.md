@@ -1,5 +1,8 @@
 # BOUNTY HUNTER
 
+<img width="1919" height="987" alt="image" src="https://github.com/user-attachments/assets/1614927d-0f01-488b-baed-9c97be2405c1" />
+
+
 Bilingual Czech / English bug bounty simulation game. This prototype uses fictional companies and reserved .test domains only. All terminal commands return scripted local results; no external hosts are contacted.
 
 ## Prototype features
