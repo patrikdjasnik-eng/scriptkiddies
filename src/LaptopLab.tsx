@@ -102,22 +102,22 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       };
       add({ text: descriptions[name] ?? 'Nástroj není v rychlé nápovědě. Otevři toolkit a vyber kategorii.', tone: descriptions[name] ? 'good' : 'warn' });
     } else if (lower === 'whoami') {
-      add({ text: 'bh-lab\\operator' }); mark(0);
+      add({ text: 'bh-lab\\operator' }); if (mission?.id === 'recon-01') mark(0);
     } else if (lower === 'pwd') {
       add({ text: 'C:\\Users\\operator' });
     } else if (lower === 'ls' || lower === 'dir' || lower === 'get-childitem') {
       add(...files.map(name => ({ text: name }))); if (mission?.id === 'ir-03') mark(0);
     } else if (lower === 'ipconfig' || lower === 'ipconfig /all') {
-      add({ text: 'Ethernet adapter LabNet:' }, { text: '   IPv4 Address . . . . . . . . . : 10.20.0.15' }, { text: '   Subnet Mask  . . . . . . . . . : 255.255.255.0' }, { text: '   Default Gateway . . . . . . . : 10.20.0.1' }); mark(1);
+      add({ text: 'Ethernet adapter LabNet:' }, { text: '   IPv4 Address . . . . . . . . . : 10.20.0.15' }, { text: '   Subnet Mask  . . . . . . . . . : 255.255.255.0' }, { text: '   Default Gateway . . . . . . . : 10.20.0.1' }); if (mission?.id === 'recon-01') mark(1);
     } else if (lower.startsWith('nslookup ')) {
       const host = command.slice(8).trim().toLowerCase();
       if (host === 'staging.noname-logistics.test' || host === 'noname-logistics.test') {
-        add({ text: 'Server:  resolver.lab', tone: 'muted' }, { text: 'Name:    ' + host }, { text: 'Address: 10.20.0.24', tone: 'good' }); mark(2);
+        add({ text: 'Server:  resolver.lab', tone: 'muted' }, { text: 'Name:    ' + host }, { text: 'Address: 10.20.0.24', tone: 'good' }); if (mission?.id === 'recon-01') mark(2);
       } else add({ text: '*** resolver.lab: NXDOMAIN', tone: 'warn' });
     } else if (lower.startsWith('nmap ')) {
       if (!lower.includes('staging.noname-logistics.test') && !lower.includes('10.20.0.24')) add({ text: 'Cíl není v inventáři této mise. Nejprve ověř DNS a rozsah.', tone: 'error' });
       else {
-        add({ text: 'Starting Nmap 7.94 ( SIMULATED LAB BUILD )' }, { text: 'Host is up (0.012s simulated latency).' }, { text: 'PORT     STATE SERVICE  VERSION' }, { text: '22/tcp   open  ssh      OpenSSH 9.2' }, { text: '80/tcp   open  http     nginx 1.24.0' }, { text: '443/tcp  open  https    nginx 1.24.0' }, { text: '3000/tcp open  http     Node.js API (simulated)' }, { text: 'Scan complete: 1 host, 4 open ports.', tone: 'good' }); mark(3);
+        add({ text: 'Starting Nmap 7.94 ( SIMULATED LAB BUILD )' }, { text: 'Host is up (0.012s simulated latency).' }, { text: 'PORT     STATE SERVICE  VERSION' }, { text: '22/tcp   open  ssh      OpenSSH 9.2' }, { text: '80/tcp   open  http     nginx 1.24.0' }, { text: '443/tcp  open  https    nginx 1.24.0' }, { text: '3000/tcp open  http     Node.js API (simulated)' }, { text: 'Scan complete: 1 host, 4 open ports.', tone: 'good' }); if (mission?.id === 'recon-01') mark(3);
       }
     } else if (lower.startsWith('curl ')) {
       if (lower.includes('/api/docs') || lower.includes('staging.noname-logistics.test')) {
