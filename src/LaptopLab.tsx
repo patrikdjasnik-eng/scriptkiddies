@@ -128,7 +128,7 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   const saveWorkspaceFile=()=>{setWorkspaceFiles(old=>({...old,[activeWorkspaceFile]:workspaceDraft}));setNotice('Uloženo: '+activeWorkspaceFile);};
   const openWorkspaceFile=(path:string)=>{setActiveWorkspaceFile(path);setWorkspaceDraft(workspaceFiles[path]??'');setActiveApp('vscode');};
   const createWorkspaceFile=()=>{const path=newFileName.trim().replace(/\\/g,'/');if(!/^workspace\/[a-zA-Z0-9._/-]{1,90}$/.test(path)||path.endsWith('/')){setNotice('Neplatná cesta. Použij workspace/nazev-souboru.ext');return;}if(workspaceFiles[path]!==undefined){setNotice('Soubor již existuje: '+path);return;}setWorkspaceFiles(old=>({...old,[path]:''}));setActiveWorkspaceFile(path);setWorkspaceDraft('');setNotice('Vytvořen soubor: '+path);};
-  const runWorkspaceFile=()=>{if(activeWorkspaceFile.toLowerCase().endsWith('.ps1')){setScript(workspaceDraft);runScript(workspaceDraft);setActiveApp('vscode');}else{setNotice('Spuštění podporuje pouze PowerShell skripty .ps1 v tomto simulátoru.');}};
+  const runWorkspaceFile=()=>{if(activeWorkspaceFile.toLowerCase().endsWith('.ps1')){setWorkspaceFiles(old=>({...old,[activeWorkspaceFile]:workspaceDraft}));setScript(workspaceDraft);runScript(workspaceDraft);setActiveApp('vscode');}else{setNotice('Spuštění podporuje pouze PowerShell skripty .ps1 v tomto simulátoru.');}};
   const mission = missions.find(item => item.id === missionId) ?? null;
   const objectiveIndex = mission ? completed.filter(id => id.startsWith(mission.id + ':')).length : 0;
   const progress = mission ? Math.min(100, Math.round(objectiveIndex / mission.objectives.length * 100)) : 0;
@@ -141,6 +141,8 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   };
   const add = (...items: Line[]) => setLines(old => [...old, ...items].slice(-100));
   const openApp = (app: AppId) => {
+    if(app==='notes')setWorkspaceDraft(workspaceFiles['workspace/notes.txt']??'');
+    if(app==='vscode')setWorkspaceDraft(workspaceFiles[activeWorkspaceFile]??'');
     setActiveApp(app);
     setOpenApps(old => old.includes(app) ? old : [...old, app]);
   };
@@ -150,9 +152,11 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
     add({ text: prompt + command, tone: 'good' });
     const lower = command.toLowerCase();
     if (lower === 'code' || lower === 'code .' || lower === 'code --new-window') { setActiveApp('vscode'); add({text:'VS Code Lab otevřen. Workspace je virtuální a lokálně uložený.',tone:'good'}); return; }
-    if (lower === 'docker' || lower === 'docker ps' || lower === 'docker images') { setActiveApp('docker'); add({text:'Docker Lab otevřen — runtime je simulovaný, žádný skutečný Docker daemon se nespouští.',tone:'good'}); return; }
+    if (lower === 'docker') { setActiveApp('docker'); add({text:'Docker Lab otevřen — runtime je simulovaný, žádný skutečný Docker daemon se nespouští.',tone:'good'}); return; }
     if (lower === 'notepad') { setActiveApp('notes'); add({text:'Poznámkový blok otevřen.',tone:'good'}); return; }
     if (lower.startsWith('new-item ') || lower.startsWith('touch ')) { const path=command.replace(/^(new-item|touch)\s+/i,'').replace(/\\/g,'/'); if(!/^workspace\/[a-zA-Z0-9._/-]{1,90}$/.test(path)){add({text:'Použij cestu workspace/nazev.ext',tone:'error'});return;} setWorkspaceFiles(old=>({...old,[path]:old[path]??''})); add({text:'Soubor vytvořen: '+path,tone:'good'}); return; }
+    if (lower.startsWith('set-content workspace/')) { const match=command.match(/^Set-Content\\s+(workspace\\/[a-zA-Z0-9._/-]+)\\s+-Value\\s+["'](.*)["']$/i); if(!match){add({text:'Syntax: Set-Content workspace/file.txt -Value "text"',tone:'warn'});return;} setWorkspaceFiles(old=>({...old,[match[1]]:match[2]})); add({text:'Soubor uložen: '+match[1],tone:'good'}); return; }
+    if (lower.startsWith('remove-item workspace/')) { const path=command.slice(12).trim().replace(/\\\\/g,'/'); if(workspaceFiles[path]===undefined){add({text:'Soubor nenalezen: '+path,tone:'error'});return;} setWorkspaceFiles(old=>{const next={...old};delete next[path];return next;}); add({text:'Soubor odstraněn: '+path,tone:'good'}); return; }
     if (lower.startsWith('get-content workspace/') || lower.startsWith('cat workspace/')) { const path=command.replace(/^(get-content|cat)\s+/i,'').replace(/\\/g,'/'); const body=workspaceFiles[path]; add({text:body===undefined?'Soubor nenalezen: '+path:'--- '+path+' ---',tone:body===undefined?'error':'good'},{text:body??''}); return; }
     if (lower.startsWith('code workspace/')) { const path=command.slice(5).replace(/\\/g,'/'); if(workspaceFiles[path]===undefined){add({text:'Soubor nenalezen: '+path,tone:'error'});return;} openWorkspaceFile(path); add({text:'Otevřen '+path,tone:'good'}); return; }
     if (lower === 'docker ps') { setActiveApp('docker'); add(...(containers.length?containers.map(c=>({text:`${c.id} ${c.image} ${c.status} ${c.name} ${c.ports}`})):[{text:'CONTAINER ID   IMAGE   STATUS   NAMES',tone:'muted'},{text:'(no containers)'}])); return; }
@@ -409,6 +413,9 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   const chooseMission = (id: string) => {
     setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setReportValidated(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
   };
+  const careerOrder:Record<CareerPath,string[]>={red:['recon-01','web-02','idor-04','sqli-05','ssrf-09','tls-10'],blue:['ir-03','tls-10','cloud-06','wifi-07','api-08'],purple:['idor-04','ir-03','ssrf-09','tls-10','api-08'],black:['ssrf-09','api-08','ir-03','sqli-05','wifi-07']};
+  const orderedMissions=[...missions].sort((a,b)=>{const order=careerOrder[careerPath];return order.indexOf(a.id)-order.indexOf(b.id);});
+  const careerLabels:Record<CareerPath,string>={red:'OFFENSIVE SECURITY · doporučený postup: recon → web → validace nálezu',blue:'DEFENSIVE SECURITY · doporučený postup: incident → logy → forenzní analýza',purple:'PURPLE TEAM · doporučený postup: ověření slabiny → detekce → validace obrany',black:'ADVERSARY STORYLINE · fiktivní scénáře, operační stopy a následná forenzní analýza'};
   const appDefs: { id: AppId; label: string; icon: typeof Terminal; hint: string }[] = [
     { id: 'powershell', label: 'Lab Terminal', icon: Terminal, hint: 'Izolovaný terminál s výukovým interpretem' },
     { id: 'editor', label: 'Script Lab', icon: Code2, hint: 'Jednoduchý editor a PowerShell mini-runner' },
@@ -426,7 +433,7 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   ];
   return <section className="laptop-lab">
     <div className="lab-intro"><div><span className="lab-kicker">SCRIPT KIDDIES // FIELD WORKSTATION · {careerPath.toUpperCase()} TRACK</span><h2>{cs ? 'Vyber misi a připrav pracovní stanici' : 'Select a mission and prepare your workstation'}</h2><p>{cs ? 'Každá mise se řeší přímo v simulovaném notebooku. Otevírej aplikace, používej příkazy, piš skripty a sbírej důkazy.' : 'Every mission is completed inside a simulated laptop. Open apps, use commands, write scripts and collect evidence.'}</p></div><div className="lab-online"><i/> LOCAL VM ONLINE<br/><span>{careerPath.toUpperCase()} TRACK · SKILL XP: {earnedXp}</span><br/><button className="career-switch-inline" onClick={()=>{try{localStorage.removeItem('bh-career-path');}catch{} window.location.reload();}}>CHANGE PATH</button></div></div>
-    {!mission ? <div className="lab-mission-select">{missions.map((item, index) => <button key={item.id} className="lab-mission-card" onClick={() => chooseMission(item.id)}><span className="lab-mission-number">0{index + 1} / CONTRACT</span><h3>{item.title}</h3><p>{item.brief}</p><div><span>{item.target}</span><b>+{item.reward} XP <Play size={13}/></b></div></button>)}</div> :
+    {!mission ? <div className="career-path-context">{careerLabels[careerPath]}</div><div className="lab-mission-select">{orderedMissions.map((item, index) => <button key={item.id} className="lab-mission-card" onClick={() => chooseMission(item.id)}><span className="lab-mission-number">0{index + 1} / CONTRACT</span><h3>{item.title}</h3><p>{item.brief}</p><div><span>{item.target}</span><b>+{item.reward} XP <Play size={13}/></b></div></button>)}</div> :
     <div className="laptop-shell">
       <div className="laptop-bezel"><div className="laptop-camera"/><div className="laptop-screen">
         <div className="desktop-topbar"><button className="linux-activities" onClick={() => setNotice('Activities: vyber aplikaci z plochy nebo spodního doku.')}><Grid3X3 size={12}/> Activities</button><span className="linux-host"><Monitor size={12}/> BOUNTYHUNTER-LAB</span><span className="linux-clock">Thu 05 Nov · 21:14</span><span className="linux-tray"><Wifi size={12}/><Volume2 size={12}/><BatteryFull size={13}/><i/> VM</span><button className="linux-session" onClick={() => setMissionId(null)}><Power size={12}/></button></div>
