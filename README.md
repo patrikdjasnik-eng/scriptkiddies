@@ -1,7 +1,4 @@
 # Script kiddies 🥱
-
-<img width="1919" height="987" alt="Bounty Hunter – screenshot hry" src="https://github.com/user-attachments/assets/1614927d-0f01-488b-baed-9c97be2405c1" />
-
 <p align="center">
   <strong>Learn bug bounty hunting by doing the work.</strong><br />
   A browser-based, free-to-play bug bounty simulation game built around realistic workflows, fictional targets and hands-on learning.
@@ -23,7 +20,7 @@
   <img src="https://img.shields.io/badge/Lucide-Icons-F56565?style=flat-square" alt="Lucide icons" />
   <img src="https://img.shields.io/badge/Status-Active%20Development-orange?style=flat-square" alt="Active development" />
 </p>
-
+<img width="1919" height="987" alt="Bounty Hunter – screenshot hry" src="https://github.com/user-attachments/assets/1614927d-0f01-488b-baed-9c97be2405c1" />
 ---
 
 ## 🧭 Overview
