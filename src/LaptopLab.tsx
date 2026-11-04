@@ -7,7 +7,12 @@ type Line = { text: string; tone?: 'good' | 'warn' | 'error' | 'muted' };
 const missions: Mission[] = [
   { id: 'recon-01', title: 'První průzkum infrastruktury', brief: 'Zmapuj staging server logistické společnosti. Zjisti jeho adresu, dostupné porty a běžící služby. Nakonec ulož důkaz.', target: 'staging.noname-logistics.test', reward: 180, objectives: ['Zkontroluj identitu operátora (whoami).', 'Zjisti síťovou konfiguraci (ipconfig).', 'Vyřeš DNS záznam cíle (nslookup).', 'Proveď simulovaný scan portů a verzí (nmap).', 'Ulož důkaz do evidence.'] },
   { id: 'web-02', title: 'Odhalená API dokumentace', brief: 'Prověř webovou aplikaci. Najdi veřejně dostupnou dokumentaci API, vyhodnoť dopad a připrav bezpečnostní doporučení.', target: 'staging.noname-logistics.test', reward: 320, objectives: ['Otevři webový cíl v Browseru.', 'Prohlédni HTTP hlavičky (curl -I).', 'Najdi veřejnou dokumentaci (/api/docs).', 'Zaznamenej nález jako důkaz.', 'Odevzdej závěrečný report.'] },
-  { id: 'ir-03', title: 'Noční incident', brief: 'Vyšetři podezřelou aktivitu na pracovním serveru. Projdi dostupné logy, sestav časovou osu a identifikuj podezřelý proces.', target: 'workstation-07.lab', reward: 420, objectives: ['Otevři složku s incidentními logy.', 'Prohledej authentication.log.', 'Identifikuj podezřelý proces.', 'Vytvoř forenzní důkaz.', 'Odevzdej incidentní report.'] }
+  { id: 'ir-03', title: 'Noční incident', brief: 'Vyšetři podezřelou aktivitu na pracovním serveru. Projdi dostupné logy, sestav časovou osu a identifikuj podezřelý proces.', target: 'workstation-07.lab', reward: 420, objectives: ['Otevři složku s incidentními logy.', 'Prohledej authentication.log.', 'Identifikuj podezřelý proces.', 'Vytvoř forenzní důkaz.', 'Odevzdej incidentní report.'] },
+  { id: 'idor-04', title: 'Cizí zásilka', brief: 'Ověř autorizaci API v izolovaném e-shopu. Porovnej dva testovací účty a zjisti, zda lze zobrazit cizí objednávku.', target: 'api.greencart.test', reward: 360, objectives: ['Otevři API klienta a načti testovací profil.', 'Proveď požadavek na vlastní objednávku.', 'Porovnej autorizaci druhého testovacího účtu.', 'Ulož minimální důkaz bez citlivých dat.', 'Odevzdej report s opravou.'] },
+  { id: 'sqli-05', title: 'Podezřelý parametr', brief: 'Analyzuj chování parametru v lokální demonstrační aplikaci. Rozliš chybu validace od skutečného bezpečnostního dopadu.', target: 'catalog.greencart.test', reward: 440, objectives: ['Prohlédni endpoint katalogu.', 'Zkontroluj běžnou odpověď aplikace.', 'Spusť bezpečnou laboratorní kontrolu SQL indikátoru.', 'Vysvětli dopad a ulož důkaz.', 'Odevzdej report.'] },
+  { id: 'cloud-06', title: 'Veřejný sklad souborů', brief: 'Prověř fiktivní cloudové úložiště. Najdi veřejný bucket, zkontroluj metadata a navrhni bezpečnou konfiguraci.', target: 'files.cloudnote.test', reward: 520, objectives: ['Vyhledej informace o cloud storage v BH Search.', 'Proveď simulovanou kontrolu bucketu.', 'Zkontroluj veřejná oprávnění.', 'Ulož konfigurační důkaz.', 'Odevzdej doporučení.'] },
+  { id: 'wifi-07', title: 'Rádiové ticho', brief: 'Analyzuj připravený Wi-Fi capture a vysvětli, co lze a nelze z metadat handshake vyvodit.', target: 'wireless-lab.local', reward: 280, objectives: ['Otevři katalog wireless nástrojů.', 'Analyzuj syntetický handshake capture.', 'Prohlédni související pakety.', 'Ulož analytický záznam.', 'Odevzdej závěry.'] },
+  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] }
 ];
 
 const internetArticles = [
@@ -37,13 +42,17 @@ const toolGroups = [
     { name: 'nmap', summary: 'Porty a detekce služeb', example: 'nmap -sV staging.noname-logistics.test' },
     { name: 'dig', summary: 'DNS dotazy a záznamy', example: 'dig staging.noname-logistics.test' },
     { name: 'whois', summary: 'Registrační metadata domény', example: 'whois noname-logistics.test' },
-    { name: 'traceroute', summary: 'Simulace síťové cesty', example: 'traceroute staging.noname-logistics.test' }
+    { name: 'traceroute', summary: 'Simulace síťové cesty', example: 'traceroute staging.noname-logistics.test' },
+    { name: 'httpie', summary: 'Čitelné HTTP požadavky', example: 'http GET https://staging.noname-logistics.test/api/docs' },
+    { name: 'jq', summary: 'Filtrování JSON odpovědí', example: 'jq . findings.json' }
   ]},
   { title: 'WEB APPLICATION SECURITY', tools: [
     { name: 'gobuster', summary: 'Hledání známých cest v lab webu', example: 'gobuster dir -u http://staging.noname-logistics.test' },
     { name: 'nikto', summary: 'Kontrola běžných webových chyb', example: 'nikto -h staging.noname-logistics.test' },
     { name: 'sqlmap', summary: 'Výuková analýza SQL injection indikátoru', example: 'sqlmap -u http://staging.noname-logistics.test/item?id=1' },
-    { name: 'burpsuite', summary: 'Prohlížení zachyceného HTTP požadavku', example: 'burpsuite --open lab-request' }
+    { name: 'burpsuite', summary: 'Prohlížení zachyceného HTTP požadavku', example: 'burpsuite --open lab-request' },
+    { name: 'ffuf', summary: 'Fuzzing cest z bezpečného slovníku v labu', example: 'ffuf -w common.txt -u https://staging.noname-logistics.test/FUZZ' },
+    { name: 'semgrep', summary: 'Statická analýza ukázkového zdrojového kódu', example: 'semgrep --config auto ./demo-app' }
   ]},
   { title: 'WIRELESS & FORENSICS', tools: [
     { name: 'aircrack-ng', summary: 'Analýza metadat syntetického Wi-Fi capture', example: 'aircrack-ng --analyze lab-handshake.cap' },
@@ -55,7 +64,9 @@ const toolGroups = [
     { name: 'john', summary: 'Audit ukázkových hashů – pouze syntetická sada', example: 'john --show lab-demo-hashes.txt' },
     { name: 'hashcat', summary: 'Kontrola stavu demonstrační hash sady', example: 'hashcat --show lab-demo-hashes.txt' },
     { name: 'strings', summary: 'Čitelné řetězce ve výukovém souboru', example: 'strings evidence/sample.bin' },
-    { name: 'sha256sum', summary: 'Kontrolní otisk důkazního souboru', example: 'sha256sum evidence/sample.bin' }
+    { name: 'sha256sum', summary: 'Kontrolní otisk důkazního souboru', example: 'sha256sum evidence/sample.bin' },
+    { name: 'exiftool', summary: 'Metadata demonstračního souboru', example: 'exiftool evidence/sample.jpg' },
+    { name: 'volatility', summary: 'Forenzní přehled syntetického memory image', example: 'volatility -f lab-memory.raw windows.pslist' }
   ]}
 ];
 
@@ -107,7 +118,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
     } else if (lower === 'toolkit') {
       setActiveApp('toolkit');
-      add({ text: 'Otevírám katalog výukových nástrojů.', tone: 'good' });
+      add({ text: 'Otevírám katalog výukových nástrojů.', tone: 'good' }); if (mission?.id === 'wifi-07') mark(0);
     } else if (lower === 'google' || lower === 'search') {
       setActiveApp('search');
       add({ text: 'Otevírám BH Search — lokální znalostní index.', tone: 'good' });
@@ -154,6 +165,60 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         if (mission?.id === 'web-02') mark(2);
       } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
       if (lower.includes('-i')) mark(1);
+    } else if (lower.startsWith('api get /me') || lower.startsWith('curl /api/me')) {
+      add({ text: 'HTTP/1.1 200 OK · account=researcher-a · role=customer', tone: 'good' }, { text: 'order_ids: [GC-1042] · owner: researcher-a' });
+      if (mission?.id === 'idor-04') mark(0);
+    } else if (lower.startsWith('api get /orders/')) {
+      const id = lower.split('/').pop();
+      if (id === 'gc-1042') {
+        add({ text: 'HTTP/1.1 200 OK · order=GC-1042 · owner=researcher-a', tone: 'good' });
+        if (mission?.id === 'idor-04') mark(1);
+      } else if (id === 'gc-2044') {
+        add({ text: 'HTTP/1.1 200 OK · order=GC-2044 · owner=researcher-b', tone: 'warn' }, { text: 'LAB FINDING: account A can read account B order. Synthetic record contains no real personal data.' });
+        if (mission?.id === 'idor-04') mark(2);
+      } else add({ text: 'HTTP/1.1 404 Not Found' });
+    } else if (lower === 'cloud-audit files.cloudnote.test') {
+      add({ text: 'CLOUD STORAGE CONFIG AUDIT · SIMULATED', tone: 'good' }, { text: 'Bucket: cloudnote-public-demo' }, { text: 'Public listing: ENABLED', tone: 'warn' }, { text: 'Write access: DISABLED' }, { text: 'Object metadata: sample-report.pdf · no user data' });
+      if (mission?.id === 'cloud-06') mark(1);
+    } else if (lower === 'cloud-acl cloudnote-public-demo') {
+      add({ text: 'ACL: READ=ANONYMOUS · WRITE=DENIED · LIST=ANONYMOUS', tone: 'warn' }, { text: 'Recommendation: disable public listing; grant least-privilege access.' });
+      if (mission?.id === 'cloud-06') mark(2);
+    } else if (lower === 'token inspect demo-token') {
+      add({ text: 'TOKEN: demo-token · issuer=cloudnote-lab · expires=never (fixture)', tone: 'warn' }, { text: 'Scopes: files:read · files:write · users:read · admin:settings', tone: 'warn' }, { text: 'Finding: excessive privileges and missing expiry in synthetic token.' });
+      if (mission?.id === 'api-08') mark(1);
+    } else if (lower === 'auth docs') {
+      add({ text: 'AUTHENTICATION GUIDE · access tokens · scopes · expiry · rotation', tone: 'good' });
+      if (mission?.id === 'api-08') mark(0);
+    } else if (lower === 'token explain') {
+      add({ text: 'Least privilege: issue only required scopes, set short expiry, rotate credentials and audit usage.' });
+      if (mission?.id === 'api-08') mark(2);
+    } else if (lower === 'sql-lab check catalog?id=1') {
+      add({ text: 'HTTP 200 · item=1 · query parameter accepted', tone: 'good' }, { text: 'Baseline response captured.' });
+      if (mission?.id === 'sqli-05') mark(1);
+    } else if (lower === 'sql-lab analyze') {
+      add({ text: 'SQLi LAB ANALYSIS · synthetic boolean differential detected', tone: 'warn' }, { text: 'True fixture: 200 / 1 result · False fixture: 200 / 0 results' }, { text: 'No payload sent to a real database. Confirm impact only in authorized environments.' });
+      if (mission?.id === 'sqli-05') mark(2);
+    } else if (lower === 'report draft') {
+      add({ text: 'REPORT DRAFT CREATED', tone: 'good' }, { text: 'Summary · affected asset · reproduction · impact · remediation' });
+      if (mission) mark(mission.objectives.length - 2);
+    } else if (lower === 'wireless summary') {
+      add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
+      if (mission?.id === 'wifi-07') mark(2);
+    } else if (lower.startsWith('http get ')) {
+      add({ text: 'HTTP/1.1 200 OK · content-type: application/json', tone: 'good' }, { text: '{"service":"staging-api","version":"2.4.1","docs":"/api/docs"}' });
+    } else if (lower === 'jq . findings.json') {
+      add({ text: '{', tone: 'good' }, { text: '  "finding": "public-api-documentation",' }, { text: '  "severity": "low",' }, { text: '  "evidence": "unauthenticated HTTP 200"' }, { text: '}' });
+    } else if (lower.startsWith('ffuf ')) {
+      add({ text: 'ffuf SIMULATED content discovery', tone: 'good' }, { text: 'api/docs        [Status: 200, Size: 1842]' }, { text: 'api/v1          [Status: 200, Size: 920]' }, { text: 'admin           [Status: 403, Size: 128]' }, { text: 'FUZZ results are generated from the local wordlist fixture.' });
+      if (mission?.id === 'web-02') mark(2);
+    } else if (lower.startsWith('semgrep ')) {
+      add({ text: 'Semgrep static analysis · demo-app', tone: 'good' }, { text: 'WARNING: authorization check missing in demo route /api/orders/:id', tone: 'warn' }, { text: 'Rule: bh.security.missing-object-authorization · confidence: HIGH' });
+      if (mission?.id === 'idor-04') mark(2);
+    } else if (lower.startsWith('exiftool ')) {
+      add({ text: 'File Name: sample.jpg' }, { text: 'Create Date: 2026:11:04 20:14:00' }, { text: 'Camera Model: Training Fixture' }, { text: 'GPS Position: Not present' });
+    } else if (lower.startsWith('volatility ')) {
+      add({ text: 'Volatility 3 · synthetic memory image', tone: 'good' }, { text: 'PID 4088 · updater_tmp.exe · suspicious unsigned process', tone: 'warn' }, { text: 'PID 2912 · powershell.exe · operator session' });
+      if (mission?.id === 'ir-03') mark(2);
     } else if (lower.startsWith('dig ') || lower.startsWith('whois ') || lower.startsWith('traceroute ')) {
       const host = command.split(/\s+/).pop() ?? 'staging.noname-logistics.test';
       if (!host.endsWith('.test') && !host.endsWith('.lab')) add({ text: 'Rozsah blokován: povoleny jsou pouze fiktivní lab domény.', tone: 'error' });
@@ -171,7 +236,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       add({ text: 'Burp Suite training proxy opened: lab-request', tone: 'good' }, { text: 'GET /api/docs HTTP/1.1' }, { text: 'Host: staging.noname-logistics.test' }, { text: 'Response fixture: HTTP/1.1 200 OK' });
     } else if (lower.startsWith('aircrack-ng')) {
       if (!lower.includes('--analyze') || !lower.includes('lab-handshake.cap')) add({ text: 'Použij pouze připravený soubor: aircrack-ng --analyze lab-handshake.cap', tone: 'warn' });
-      else add({ text: 'Aircrack-ng LAB ANALYZER · SYNTHETIC CAPTURE', tone: 'good' }, { text: 'File: lab-handshake.cap · 184 packets · 1 fictional access point' }, { text: 'SSID: BH-TRAINING · BSSID: 02:00:00:00:00:01' }, { text: 'WPA2 handshake metadata: PRESENT · frame sequence: CONSISTENT', tone: 'good' }, { text: 'Educational note: this exercise inspects capture metadata only. No real Wi-Fi capture, deauthentication or password cracking is performed.', tone: 'muted' });
+      else add({ text: 'Aircrack-ng LAB ANALYZER · SYNTHETIC CAPTURE', tone: 'good' }, { text: 'File: lab-handshake.cap · 184 packets · 1 fictional access point' }, { text: 'SSID: BH-TRAINING · BSSID: 02:00:00:00:00:01' }, { text: 'WPA2 handshake metadata: PRESENT · frame sequence: CONSISTENT', tone: 'good' }, { text: 'Educational note: this exercise inspects capture metadata only. No real Wi-Fi capture, deauthentication or password cracking is performed.', tone: 'muted' }); if (mission?.id === 'wifi-07') mark(1);
     } else if (lower.startsWith('wireshark ') || lower.startsWith('tshark ')) {
       add({ text: 'PCAP ANALYSIS · lab-traffic.pcap', tone: 'good' }, { text: '21:04:12 DNS query staging.noname-logistics.test' }, { text: '21:04:13 TCP SYN 10.20.0.15 → 10.20.0.24:443' }, { text: '21:04:14 TLS handshake completed' }, { text: '21:04:15 HTTP GET /api/docs → 200 OK' });
     } else if (lower.startsWith('john ') || lower.startsWith('hashcat ')) {
@@ -192,8 +257,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       setEvidence(old => old.includes(name) ? old : [...old, name]);
       add({ text: 'Evidence uložen: ' + name, tone: 'good' });
       if (mission?.id === 'recon-01') mark(4);
-      if (mission?.id === 'web-02') mark(3);
+      if (mission?.id === 'web-02' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'api-08' || mission?.id === 'wifi-07') mark(3);
       if (mission?.id === 'ir-03') mark(3);
+      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
@@ -254,9 +320,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
           <div className="desktop-mission-widget"><small>ACTIVE CONTRACT</small><b>{mission.title}</b><span>{mission.target}</span><div className="mission-progress"><i style={{ width: progress + '%' }}/></div><small>{objectiveIndex}/{mission.objectives.length} OBJECTIVES · {progress}%</small></div>
           {activeApp === 'powershell' && <div className="desktop-window terminal-window"><div className="desktop-window-title"><span><Terminal size={14}/> Windows PowerShell</span><div><button onClick={() => setLines(initialLines)}>↻</button><button onClick={() => setActiveApp('powershell')}>—</button><button onClick={() => setActiveApp('monitor')}>×</button></div></div><div className="powershell-output">{lines.map((line, i) => <div key={i} className={line.tone ?? ''}>{line.text || '\u00a0'}</div>)}</div><form className="powershell-input" onSubmit={e => { e.preventDefault(); runCommand(input); setInput(''); }}><span>{prompt}</span><input autoComplete="off" spellCheck={false} value={input} onChange={e => setInput(e.target.value)} placeholder="help"/><button><Play size={12}/></button></form></div>}
           {activeApp === 'editor' && <div className="desktop-window editor-window"><div className="desktop-window-title"><span><Code2 size={14}/> Script Lab — recon.ps1</span><button onClick={runScript}><Play size={12}/> RUN SCRIPT</button></div><div className="editor-help">PowerShell mini-runner · podporované konstrukce: Write-Host, proměnné $target a Resolve-DnsName.</div><textarea spellCheck={false} value={script} onChange={e => setScript(e.target.value)}/><div className="script-output">{scriptOutput.map((line, i) => <div key={i}>{line}</div>)}</div></div>}
-          {activeApp === 'browser' && <div className="desktop-window browser-window"><div className="desktop-window-title"><span><Globe2 size={14}/> BH Browser</span><span>LOCAL LAB ONLY</span></div><div className="browser-address"><Search size={13}/><input value={url} onChange={e => setUrl(e.target.value)}/><button onClick={() => { setNotice('Stránka načtena z lokální simulace.'); if (mission.id === 'web-02') mark(0); }}>GO</button></div><div className="browser-page"><div className="browser-brand">NONAME <b>LOGISTICS</b></div><h3>{url.includes('/api/docs') ? 'API Documentation' : 'Shipment Portal'}</h3><p>{url.includes('/api/docs') ? 'OpenAPI 3.0 · Internal shipment and tracking endpoints' : 'Track shipments, manage delivery preferences and view service status.'}</p><div className="browser-endpoints"><code>GET /api/v1/shipments/:id</code><code>GET /api/v1/tracking/:code</code><code>POST /api/v1/session</code></div><small>SIMULATED RESPONSE · HTTP 200</small></div></div>}
+          {activeApp === 'browser' && <div className="desktop-window browser-window"><div className="desktop-window-title"><span><Globe2 size={14}/> BH Browser</span><span>LOCAL LAB ONLY</span></div><div className="browser-address"><Search size={13}/><input value={url} onChange={e => setUrl(e.target.value)}/><button onClick={() => { setNotice('Stránka načtena z lokální simulace.'); if (mission.id === 'web-02') mark(0); if (mission.id === 'sqli-05') mark(0); }}>GO</button></div><div className="browser-page"><div className="browser-brand">NONAME <b>LOGISTICS</b></div><h3>{url.includes('/api/docs') ? 'API Documentation' : 'Shipment Portal'}</h3><p>{url.includes('/api/docs') ? 'OpenAPI 3.0 · Internal shipment and tracking endpoints' : 'Track shipments, manage delivery preferences and view service status.'}</p><div className="browser-endpoints"><code>GET /api/v1/shipments/:id</code><code>GET /api/v1/tracking/:code</code><code>POST /api/v1/session</code></div><small>SIMULATED RESPONSE · HTTP 200</small></div></div>}
 
-          {activeApp === 'search' && <div className="desktop-window internet-window"><div className="desktop-window-title"><span><Search size={14}/> BH Search <b className="fake-google">G</b></span><span>INDEX: LOCAL KNOWLEDGE WEB</span></div><div className="search-home"><div className="search-logo"><span>B</span>H Search</div><p>Vyhledávač znalostí pro bezpečnostní výzkumníky</p><form onSubmit={e => { e.preventDefault(); setSelectedArticle(null); }}><Search size={15}/><input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Hledej třeba IDOR, Nmap, HTTP headers…"/><button>HLEDAT</button></form><div className="search-chips">{['bug bounty scope','IDOR','HTTP headers','Wi-Fi handshake','report'].map(q => <button key={q} onClick={() => {setSearchQuery(q);setSelectedArticle(null);}}>{q}</button>)}</div></div><div className="search-results">{selectedArticle ? <article className="search-article"><button className="back-results" onClick={() => setSelectedArticle(null)}>← ZPĚT NA VÝSLEDKY</button><small>{selectedArticle.category} · BH KNOWLEDGE BASE</small><h3>{selectedArticle.title}</h3><p>{selectedArticle.body}</p><div className="article-tags">{selectedArticle.tags}</div></article> : <>{(searchQuery.trim() ? internetArticles.filter(a => (a.title+' '+a.category+' '+a.tags+' '+a.excerpt).toLowerCase().includes(searchQuery.toLowerCase())) : internetArticles).map(a => <button className="search-result" key={a.title} onClick={() => setSelectedArticle(a)}><small>bh-search.local › knowledge › {a.category.toLowerCase().replaceAll(' ','-')}</small><b>{a.title}</b><span>{a.excerpt}</span></button>)}{searchQuery.trim() && !internetArticles.some(a => (a.title+' '+a.category+' '+a.tags+' '+a.excerpt).toLowerCase().includes(searchQuery.toLowerCase())) && <p className="empty-search">Nic jsme nenašli. Zkus obecnější výraz, například „recon“ nebo „report“.</p>}</>}</div><div className="internet-footer">BH SEARCH · FIKTIVNÍ INTERNET · {internetArticles.length} INDEXOVANÝCH ČLÁNKŮ</div></div>}
+          {activeApp === 'search' && <div className="desktop-window internet-window"><div className="desktop-window-title"><span><Search size={14}/> BH Search <b className="fake-google">G</b></span><span>INDEX: LOCAL KNOWLEDGE WEB</span></div><div className="search-home"><div className="search-logo"><span>B</span>H Search</div><p>Vyhledávač znalostí pro bezpečnostní výzkumníky</p><form onSubmit={e => { e.preventDefault(); setSelectedArticle(null); }}><Search size={15}/><input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Hledej třeba IDOR, Nmap, HTTP headers…"/><button>HLEDAT</button></form><div className="search-chips">{['bug bounty scope','IDOR','HTTP headers','Wi-Fi handshake','report'].map(q => <button key={q} onClick={() => {setSearchQuery(q);setSelectedArticle(null);}}>{q}</button>)}</div></div><div className="search-results">{selectedArticle ? <article className="search-article"><button className="back-results" onClick={() => setSelectedArticle(null)}>← ZPĚT NA VÝSLEDKY</button><small>{selectedArticle.category} · BH KNOWLEDGE BASE</small><h3>{selectedArticle.title}</h3><p>{selectedArticle.body}</p><div className="article-tags">{selectedArticle.tags}</div></article> : <>{(searchQuery.trim() ? internetArticles.filter(a => (a.title+' '+a.category+' '+a.tags+' '+a.excerpt).toLowerCase().includes(searchQuery.toLowerCase())) : internetArticles).map(a => <button className="search-result" key={a.title} onClick={() => { setSelectedArticle(a); if (mission?.id === 'cloud-06') mark(0); }}><small>bh-search.local › knowledge › {a.category.toLowerCase().replaceAll(' ','-')}</small><b>{a.title}</b><span>{a.excerpt}</span></button>)}{searchQuery.trim() && !internetArticles.some(a => (a.title+' '+a.category+' '+a.tags+' '+a.excerpt).toLowerCase().includes(searchQuery.toLowerCase())) && <p className="empty-search">Nic jsme nenašli. Zkus obecnější výraz, například „recon“ nebo „report“.</p>}</>}</div><div className="internet-footer">BH SEARCH · FIKTIVNÍ INTERNET · {internetArticles.length} INDEXOVANÝCH ČLÁNKŮ</div></div>}
           {activeApp === 'bounty' && <div className="desktop-window bounty-window"><div className="desktop-window-title"><span><Bug size={14}/> BH Bounty Hub</span><span>COMMUNITY PLATFORM · SIMULATED</span></div><div className="bounty-scroll"><div className="bounty-hero"><div><small>BUG BOUNTY ECOSYSTEM</small><h3>Find bugs. Learn skills. Earn reputation.</h3><p>Fiktivní platforma inspirovaná bug bounty ekosystémy. Registrace i programy zůstávají pouze v tomto herním profilu.</p></div><div className="bounty-stat"><b>{joinedPrograms.length}</b><span>JOINED PROGRAMS</span></div></div>{registeredProfile ? <div className="bounty-profile"><div><small>RESEARCHER ACCOUNT</small><b>{registeredProfile.handle}</b><span>{registeredProfile.name} · {registeredProfile.email}</span></div><strong>ROOKIE RESEARCHER</strong></div> : <form className="bounty-register" onSubmit={e => {e.preventDefault(); const name=applicantName.trim(); const email=applicantEmail.trim(); if(!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {setNotice('Vyplň jméno a platnou demonstrační e-mailovou adresu.');return;} const profile={name,email,handle:'@'+name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}; setRegisteredProfile(profile); try{localStorage.setItem('bh-lab-bounty-profile',JSON.stringify(profile));}catch{} setNotice('Simulovaný výzkumnický účet byl vytvořen.');}}><div><b>Vytvořit výzkumnický účet</b><small>Registrace je lokální. Nic se neposílá na server.</small></div><label>DISPLAY NAME<input required maxLength={32} value={applicantName} onChange={e=>setApplicantName(e.target.value)} placeholder="např. packet_rabbit"/></label><label>EMAIL (DEMO)<input required type="email" maxLength={100} value={applicantEmail} onChange={e=>setApplicantEmail(e.target.value)} placeholder="researcher@example.test"/></label><button>CREATE ACCOUNT ↗</button></form>}<div className="bounty-program-heading"><b>AVAILABLE PROGRAMS</b><span>{bountyPrograms.length} FICTIONAL PROGRAMS</span></div><div className="bounty-programs">{bountyPrograms.map(p => <article key={p.name}><div className="program-top"><span>{p.level}</span><b>{p.reward}</b></div><h4>{p.name}</h4><code>{p.domain}</code><p>{p.description}</p><small>SCOPE: {p.scope}</small><button disabled={!registeredProfile || joinedPrograms.includes(p.name)} onClick={()=>{setJoinedPrograms(old=>[...old,p.name]);setNotice('Připojil ses k programu '+p.name+'. Před testováním si prostuduj scope.')}}>{joinedPrograms.includes(p.name)?'JOINED ✓':registeredProfile?'JOIN PROGRAM':'REGISTER TO JOIN'}</button></article>)}</div><div className="bounty-rules"><b>PROGRAM RULES</b><p>Všechny programy, domény, odměny i účty jsou smyšlené. Scope je součástí mise. V reálném bug bounty vždy dodržuj pravidla programu a testuj jen výslovně povolené cíle.</p></div></div></div>}
           {activeApp === 'files' && <div className="desktop-window files-window"><div className="desktop-window-title"><span><Folder size={14}/> File Explorer</span><span> C:\Users\operator</span></div>{files.map(file => <button key={file} onClick={() => file === 'evidence/' ? setNotice(evidence.length ? evidence.join(', ') : 'Evidence folder je zatím prázdná.') : setNotice(file + ' — lokální ukázkový soubor.')}><Folder size={14}/>{file}</button>)}<div className="file-evidence"><b>COLLECTED EVIDENCE</b>{evidence.length ? evidence.map(item => <code key={item}>{item}</code>) : <small>Žádné důkazy. Použij evidence add &lt;název&gt; v PowerShellu.</small>}</div></div>}
           {activeApp === 'knowledge' && <div className="desktop-window knowledge-window"><div className="desktop-window-title"><span><BookOpen size={14}/> Knowledge Base</span><span>FIELD MANUAL / 01</span></div><h3>PowerShell pro bezpečnostní průzkum</h3><article><b>whoami</b><p>Vypíše aktuální účet. Před prací ověř, pod jakou identitou příkazy spouštíš.</p></article><article><b>ipconfig</b><p>Zobrazí síťová rozhraní, IP adresy, masku a výchozí bránu.</p></article><article><b>nslookup &lt;host&gt;</b><p>Dotáže DNS resolver a přeloží doménové jméno na IP adresu.</p></article><article><b>nmap -sV &lt;host&gt;</b><p>V laboratoři simuluje zjištění otevřených portů a identifikaci verzí služeb. -sV znamená detekci verzí.</p></article><article><b>curl -I &lt;url&gt;</b><p>Načte pouze hlavičky HTTP odpovědi. Učí číst status kód a metadata serveru.</p></article></div>}
