@@ -60,7 +60,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'pwd') {
       add({ text: 'C:\\Users\\operator' });
     } else if (lower === 'ls' || lower === 'dir' || lower === 'get-childitem') {
-      add(...files.map(name => ({ text: name })));
+      add(...files.map(name => ({ text: name }))); if (mission?.id === 'ir-03') mark(0);
     } else if (lower === 'ipconfig' || lower === 'ipconfig /all') {
       add({ text: 'Ethernet adapter LabNet:' }, { text: '   IPv4 Address . . . . . . . . . : 10.20.0.15' }, { text: '   Subnet Mask  . . . . . . . . . : 255.255.255.0' }, { text: '   Default Gateway . . . . . . . : 10.20.0.1' }); mark(1);
     } else if (lower.startsWith('nslookup ')) {
@@ -112,17 +112,17 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const runScript = () => {
     const output: string[] = [];
     const target = mission?.target ?? 'staging.noname-logistics.test';
-    script.split(/\\r?\\n/).forEach(raw => {
+    script.split(/\r?\n/).forEach(raw => {
       const line = raw.trim();
       if (!line || line.startsWith('#')) return;
-      const hostMatch = line.match(/^(?:\\$target|\\$host)\\s*=\\s*["']([^"']+)["']$/i);
-      const printMatch = line.match(/^Write-Host\\s+["'](.*)["']$/i);
-      const printVar = line.match(/^Write-Host\\s+\\$(target|host)$/i);
-      if (hostMatch) output.push(`[proměnná nastavena] ${hostMatch[1]}`);
+      const hostMatch = line.match(/^(?:\$target|\$host)\s*=\s*["']([^"']+)["']$/i);
+      const printMatch = line.match(/^Write-Host\s+["'](.*)["']$/i);
+      const printVar = line.match(/^Write-Host\s+\$(target|host)$/i);
+      if (hostMatch) output.push('[proměnná nastavena] ' + hostMatch[1]);
       else if (printMatch) output.push(printMatch[1]);
       else if (printVar) output.push(target);
-      else if (/^Resolve-DnsName\\s+\\$target$/i.test(line)) output.push(`Name: ${target} · IPAddress: 10.20.0.24 (simulováno)`);
-      else output.push(`Řádek přeskočen — příkaz není v podporované sadě: ${line}`);
+      else if (/^Resolve-DnsName\s+\$target$/i.test(line)) output.push('Name: ' + target + ' · IPAddress: 10.20.0.24 (simulováno)');
+      else output.push('Řádek přeskočen — příkaz není v podporované sadě: ' + line);
     });
     setScriptOutput(output.length ? output : ['Skript proběhl, ale nevypsal žádný výstup.']);
   };
