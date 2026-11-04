@@ -184,7 +184,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       }
     } else if (lower.startsWith('curl ')) {
       const allowedHost = ['staging.noname-logistics.test', 'portal.cloudnote.test', 'hooks.cloudnote.test', 'catalog.greencart.test', 'files.cloudnote.test'].some(host => lower.includes(host));
-      const headersOnly = /(^|\\s)-I(\\s|$)/i.test(command);
+      const headersOnly = /(^|\s)-I(\s|$)/i.test(command);
       const docsPath = lower.includes('/api/docs');
       if (!allowedHost) add({ text: 'curl: cíl není v inventáři izolované laboratoře.', tone: 'error' });
       else if (headersOnly) {
