@@ -42,13 +42,17 @@ const toolGroups = [
     { name: 'nmap', summary: 'Porty a detekce služeb', example: 'nmap -sV staging.noname-logistics.test' },
     { name: 'dig', summary: 'DNS dotazy a záznamy', example: 'dig staging.noname-logistics.test' },
     { name: 'whois', summary: 'Registrační metadata domény', example: 'whois noname-logistics.test' },
-    { name: 'traceroute', summary: 'Simulace síťové cesty', example: 'traceroute staging.noname-logistics.test' }
+    { name: 'traceroute', summary: 'Simulace síťové cesty', example: 'traceroute staging.noname-logistics.test' },
+    { name: 'httpie', summary: 'Čitelné HTTP požadavky', example: 'http GET https://staging.noname-logistics.test/api/docs' },
+    { name: 'jq', summary: 'Filtrování JSON odpovědí', example: 'jq . findings.json' }
   ]},
   { title: 'WEB APPLICATION SECURITY', tools: [
     { name: 'gobuster', summary: 'Hledání známých cest v lab webu', example: 'gobuster dir -u http://staging.noname-logistics.test' },
     { name: 'nikto', summary: 'Kontrola běžných webových chyb', example: 'nikto -h staging.noname-logistics.test' },
     { name: 'sqlmap', summary: 'Výuková analýza SQL injection indikátoru', example: 'sqlmap -u http://staging.noname-logistics.test/item?id=1' },
-    { name: 'burpsuite', summary: 'Prohlížení zachyceného HTTP požadavku', example: 'burpsuite --open lab-request' }
+    { name: 'burpsuite', summary: 'Prohlížení zachyceného HTTP požadavku', example: 'burpsuite --open lab-request' },
+    { name: 'ffuf', summary: 'Fuzzing cest z bezpečného slovníku v labu', example: 'ffuf -w common.txt -u https://staging.noname-logistics.test/FUZZ' },
+    { name: 'semgrep', summary: 'Statická analýza ukázkového zdrojového kódu', example: 'semgrep --config auto ./demo-app' }
   ]},
   { title: 'WIRELESS & FORENSICS', tools: [
     { name: 'aircrack-ng', summary: 'Analýza metadat syntetického Wi-Fi capture', example: 'aircrack-ng --analyze lab-handshake.cap' },
@@ -60,7 +64,9 @@ const toolGroups = [
     { name: 'john', summary: 'Audit ukázkových hashů – pouze syntetická sada', example: 'john --show lab-demo-hashes.txt' },
     { name: 'hashcat', summary: 'Kontrola stavu demonstrační hash sady', example: 'hashcat --show lab-demo-hashes.txt' },
     { name: 'strings', summary: 'Čitelné řetězce ve výukovém souboru', example: 'strings evidence/sample.bin' },
-    { name: 'sha256sum', summary: 'Kontrolní otisk důkazního souboru', example: 'sha256sum evidence/sample.bin' }
+    { name: 'sha256sum', summary: 'Kontrolní otisk důkazního souboru', example: 'sha256sum evidence/sample.bin' },
+    { name: 'exiftool', summary: 'Metadata demonstračního souboru', example: 'exiftool evidence/sample.jpg' },
+    { name: 'volatility', summary: 'Forenzní přehled syntetického memory image', example: 'volatility -f lab-memory.raw windows.pslist' }
   ]}
 ];
 
@@ -195,6 +201,21 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'wireless summary') {
       add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
       if (mission?.id === 'wifi-07') mark(2);
+    } else if (lower.startsWith('http get ')) {
+      add({ text: 'HTTP/1.1 200 OK · content-type: application/json', tone: 'good' }, { text: '{"service":"staging-api","version":"2.4.1","docs":"/api/docs"}' });
+    } else if (lower === 'jq . findings.json') {
+      add({ text: '{', tone: 'good' }, { text: '  "finding": "public-api-documentation",' }, { text: '  "severity": "low",' }, { text: '  "evidence": "unauthenticated HTTP 200"' }, { text: '}' });
+    } else if (lower.startsWith('ffuf ')) {
+      add({ text: 'ffuf SIMULATED content discovery', tone: 'good' }, { text: 'api/docs        [Status: 200, Size: 1842]' }, { text: 'api/v1          [Status: 200, Size: 920]' }, { text: 'admin           [Status: 403, Size: 128]' }, { text: 'FUZZ results are generated from the local wordlist fixture.' });
+      if (mission?.id === 'web-02') mark(2);
+    } else if (lower.startsWith('semgrep ')) {
+      add({ text: 'Semgrep static analysis · demo-app', tone: 'good' }, { text: 'WARNING: authorization check missing in demo route /api/orders/:id', tone: 'warn' }, { text: 'Rule: bh.security.missing-object-authorization · confidence: HIGH' });
+      if (mission?.id === 'idor-04') mark(2);
+    } else if (lower.startsWith('exiftool ')) {
+      add({ text: 'File Name: sample.jpg' }, { text: 'Create Date: 2026:11:04 20:14:00' }, { text: 'Camera Model: Training Fixture' }, { text: 'GPS Position: Not present' });
+    } else if (lower.startsWith('volatility ')) {
+      add({ text: 'Volatility 3 · synthetic memory image', tone: 'good' }, { text: 'PID 4088 · updater_tmp.exe · suspicious unsigned process', tone: 'warn' }, { text: 'PID 2912 · powershell.exe · operator session' });
+      if (mission?.id === 'ir-03') mark(2);
     } else if (lower.startsWith('dig ') || lower.startsWith('whois ') || lower.startsWith('traceroute ')) {
       const host = command.split(/\s+/).pop() ?? 'staging.noname-logistics.test';
       if (!host.endsWith('.test') && !host.endsWith('.lab')) add({ text: 'Rozsah blokován: povoleny jsou pouze fiktivní lab domény.', tone: 'error' });
@@ -233,8 +254,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       setEvidence(old => old.includes(name) ? old : [...old, name]);
       add({ text: 'Evidence uložen: ' + name, tone: 'good' });
       if (mission?.id === 'recon-01') mark(4);
-      if (mission?.id === 'web-02') mark(3);
+      if (mission?.id === 'web-02' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'api-08' || mission?.id === 'wifi-07') mark(3);
       if (mission?.id === 'ir-03') mark(3);
+      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
