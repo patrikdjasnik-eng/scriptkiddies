@@ -21,3 +21,9 @@ npm run dev
 npm run build
 
 All commands operate only on fictional .test targets. This is a game simulation, not a real penetration-testing tool.
+
+## Velikost hry
+
+Maximální velikost produkčního balíčku je **10 GiB**. Produkční build automaticky kontroluje adresář `dist/`; při překročení limitu selže a od 80 % limitu vypíše varování. Rozpočet jednotlivých typů obsahu a pravidla pro assety jsou popsány v [`docs/ASSET_BUDGET.md`](docs/ASSET_BUDGET.md) a strojově definovány v [`game.config.json`](game.config.json).
+
+Samostatná kontrola: `npm run check:assets` (po vytvoření buildu).
