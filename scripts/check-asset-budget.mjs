@@ -35,8 +35,8 @@ try {
 }
 
 const total = files.reduce((sum, file) => sum + file.bytes, 0);
-const gib = value => (value / 1024 ** 3).toFixed(2);
-console.log(`\nBOUNTY HUNTER — PACKAGE SIZE\nDirectory: ${root}\nFiles: ${files.length}\nTotal: ${gib(total)} GiB / ${gib(limit)} GiB`);
+const gib = value => (value / 1_000_000_000).toFixed(2);
+console.log(`\nBOUNTY HUNTER — PACKAGE SIZE\nDirectory: ${root}\nFiles: ${files.length}\nTotal: ${gib(total)} GB / ${gib(limit)} GiB`);
 
 if (total > warningAt) console.warn(`WARNING: package exceeds ${Math.round(config.distribution.warningThreshold * 100)}% of the 10 GiB budget.`);
 if (total > limit) {
