@@ -1,4 +1,4 @@
-# 🎯 BOUNTY HUNTER
+#Script kiddies 🥱
 
 <p align="center">
   <strong>Learn bug bounty hunting by doing the work.</strong><br />
