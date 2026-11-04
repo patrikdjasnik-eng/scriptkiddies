@@ -88,6 +88,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [lines, setLines] = useState<Line[]>(initialLines);
   const [completed, setCompleted] = useState<string[]>([]);
   const [evidence, setEvidence] = useState<string[]>([]);
+  const [reportDrafted, setReportDrafted] = useState(false);
   const [url, setUrl] = useState('http://staging.noname-logistics.test');
   const [script, setScript] = useState('Write-Host "Starting reconnaissance..."\n$target = "staging.noname-logistics.test"\nWrite-Host "Target: $target"\n# Try: Resolve-DnsName $target');
   const [scriptOutput, setScriptOutput] = useState<string[]>([]);
@@ -243,8 +244,19 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       add({ text: 'SQLi LAB ANALYSIS · synthetic boolean differential detected', tone: 'warn' }, { text: 'True fixture: 200 / 1 result · False fixture: 200 / 0 results' }, { text: 'No payload sent to a real database. Confirm impact only in authorized environments.' });
       if (mission?.id === 'sqli-05') mark(2);
     } else if (lower === 'report draft') {
-      add({ text: 'REPORT DRAFT CREATED', tone: 'good' }, { text: 'Summary · affected asset · reproduction · impact · remediation' });
-      if (mission) mark(mission.objectives.length - 2);
+      if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
+      else if (!evidence.length) add({ text: 'Nelze vytvořit report: nejprve ulož alespoň jeden konkrétní důkaz pomocí evidence add <název>.', tone: 'warn' });
+      else {
+        setReportDrafted(true);
+        add({ text: 'VULNERABILITY REPORT · DRAFT', tone: 'good' }, { text: 'Title: ' + mission.title }, { text: 'Affected asset: ' + mission.target }, { text: 'Evidence: ' + evidence.join(', ') }, { text: 'Reproduction: doplň přesné kroky a pozorované chování.' }, { text: 'Impact: popiš dopad na důvěrnost, integritu nebo dostupnost.' }, { text: 'Remediation: navrhni konkrétní opravu.' }, { text: 'Status: DRAFT — spusť report validate před odevzdáním.', tone: 'warn' });
+      }
+    } else if (lower === 'report validate') {
+      if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
+      else {
+        const missing = [!evidence.length ? 'evidence' : '', !reportDrafted ? 'report draft' : ''].filter(Boolean);
+        if (missing.length) add({ text: 'REPORT VALIDATION FAILED · chybí: ' + missing.join(', '), tone: 'error' });
+        else add({ text: 'REPORT VALIDATION PASSED · draft a důkazy jsou připravené.', tone: 'good' }, { text: 'Poznámka: před odevzdáním doplň reprodukční kroky, dopad a mitigaci.' });
+      }
     } else if (lower === 'wireless summary') {
       add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
       if (mission?.id === 'wifi-07') mark(2);
@@ -306,7 +318,8 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08' || mission?.id === 'ssrf-09' || mission?.id === 'tls-10') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
-      else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
+      else if (!evidence.length || !reportDrafted) add({ text: 'Odevzdání zamítnuto: potřebuješ alespoň jeden důkaz a vytvořený report. Použij evidence add, report draft a report validate.', tone: 'warn' });
+      else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= (mission.id === 'recon-01' ? mission.objectives.length - 1 : mission.objectives.length - 1)) {
         if (submitted.includes(mission.id)) { add({ text: 'Tato mise už byla odevzdána.', tone: 'warn' }); return; }
         mark(mission.objectives.length - 1);
         setSubmitted(old => [...old, mission.id]);
@@ -339,7 +352,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     setScriptOutput(output.length ? output : ['Skript proběhl, ale nevypsal žádný výstup.']);
   };
   const chooseMission = (id: string) => {
-    setMissionId(id); setCompleted([]); setEvidence([]); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
+    setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
   };
   const appDefs: { id: AppId; label: string; icon: typeof Terminal; hint: string }[] = [
     { id: 'powershell', label: 'PowerShell', icon: Terminal, hint: 'Terminál a příkazová řádka' },
