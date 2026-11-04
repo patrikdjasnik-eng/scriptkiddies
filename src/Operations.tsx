@@ -63,6 +63,7 @@ export default function Operations({ page, lang, active, assets, finding, onReco
   const [selectedTarget, setSelectedTarget] = useState(program.scope[0] ?? 'noname-logistics.test');
   const [running, setRunning] = useState<'recon' | 'scan' | null>(null);
   const targets = useMemo(() => program.scope, [program.id]);
+  const affectedAsset = program.scope.find(target => target.includes('staging') || target.startsWith('*.'))?.replace(/^\*\./, 'staging.') ?? program.scope[0] ?? 'unknown.test';
   const start = (kind: 'recon' | 'scan') => {
     if (!selectedTarget.endsWith('.test')) return;
     setRunning(kind);
@@ -88,7 +89,7 @@ export default function Operations({ page, lang, active, assets, finding, onReco
 
   if (page === 3) return <section className="ops-page">
     <div className="ops-heading"><div className="eyebrow"><i/>{t.reports}</div><h1>{t.reports}</h1><p>{t.reportsSub}</p></div>
-    {finding ? <article className="finding-card"><div className="finding-top"><span className="finding-severity">{t.low}</span><span className="finding-state"><CheckCircle2 size={13}/> {t.reportReady}</span></div><h2>{t.reportTitle}</h2><div className="finding-meta"><div><small>{t.severity}</small><b>{t.low}</b></div><div><small>{t.asset}</small><b>staging.{program.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.test</b></div></div><div className="evidence-box"><b>{t.evidence}</b><p>{t.evidenceText}</p></div><button className="primary" onClick={onReport}><FileSearch size={15}/>{t.create}<ArrowRight size={15}/></button></article> : <div className="empty-findings"><Bug size={28}/><h2>{t.empty}</h2><p>{t.emptyDesc}</p></div>}
+    {finding ? <article className="finding-card"><div className="finding-top"><span className="finding-severity">{t.low}</span><span className="finding-state"><CheckCircle2 size={13}/> {t.reportReady}</span></div><h2>{t.reportTitle}</h2><div className="finding-meta"><div><small>{t.severity}</small><b>{t.low}</b></div><div><small>{t.asset}</small><b>staging.{affectedAsset}</b></div></div><div className="evidence-box"><b>{t.evidence}</b><p>{t.evidenceText}</p></div><button className="primary" onClick={onReport}><FileSearch size={15}/>{t.create}<ArrowRight size={15}/></button></article> : <div className="empty-findings"><Bug size={28}/><h2>{t.empty}</h2><p>{t.emptyDesc}</p></div>}
   </section>;
 
   return <section className="ops-page">
