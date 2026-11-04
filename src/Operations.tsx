@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import GameOS from './GameOS';
 import { Activity, ArrowRight, Bug, CheckCircle2, Cpu, FileSearch, Fingerprint, Globe2, HardDrive, Network, Play, Radar, ShieldCheck, Terminal, XCircle } from 'lucide-react';
 
 type Locale = 'cs' | 'en';
@@ -111,5 +112,6 @@ export default function Operations({ page, lang, active, assets, finding, onReco
       </aside>
     </div>
     <div className="workspace-footnote"><XCircle size={14}/>{t.discoveredDesc}</div>
+    <GameOS lang={lang} programId={program.id} />
   </section>;
 }
