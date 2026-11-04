@@ -31,6 +31,8 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [script, setScript] = useState('Write-Host "Starting reconnaissance..."\n$target = "staging.noname-logistics.test"\nWrite-Host "Target: $target"\n# Try: Resolve-DnsName $target');
   const [scriptOutput, setScriptOutput] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
+  const [earnedXp, setEarnedXp] = useState(0);
+  const [submitted, setSubmitted] = useState<string[]>([]);
   const mission = missions.find(item => item.id === missionId) ?? null;
   const objectiveIndex = mission ? completed.filter(id => id.startsWith(mission.id + ':')).length : 0;
   const progress = mission ? Math.min(100, Math.round(objectiveIndex / mission.objectives.length * 100)) : 0;
@@ -77,6 +79,12 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         if (mission?.id === 'web-02') mark(2);
       } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
       if (lower.includes('-i')) mark(1);
+    } else if (lower === 'cat authentication.log' || lower === 'get-content logs/authentication.log') {
+      add({ text: '21:04:12 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:04:18 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:05:02 AUTH_SUCCESS user=svc_backup src=10.20.0.44', tone: 'warn' });
+      if (mission?.id === 'ir-03') mark(1);
+    } else if (lower === 'get-process' || lower === 'ps') {
+      add({ text: 'ProcessName       Id     CPU' }, { text: 'explorer          1840   00:01' }, { text: 'powershell        2912   00:02' }, { text: 'updater_tmp       4088   18:42', tone: 'warn' });
+      if (mission?.id === 'ir-03') mark(2);
     } else if (lower.startsWith('evidence add ')) {
       const name = command.slice(13).trim() || 'unnamed-evidence';
       setEvidence(old => old.includes(name) ? old : [...old, name]);
@@ -87,7 +95,11 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
-        add({ text: 'MISSION SUBMITTED — vyhodnocení dokončeno.', tone: 'good' });
+        if (submitted.includes(mission.id)) { add({ text: 'Tato mise už byla odevzdána.', tone: 'warn' }); return; }
+        mark(mission.objectives.length - 1);
+        setSubmitted(old => [...old, mission.id]);
+        setEarnedXp(old => old + mission.reward);
+        add({ text: 'MISSION SUBMITTED — vyhodnocení dokončeno. +' + mission.reward + ' XP', tone: 'good' });
         setNotice('Mise odevzdána. Získáváš ' + mission.reward + ' XP.');
       } else add({ text: 'Report zatím není kompletní. Zkontroluj checklist mise.', tone: 'warn' });
     } else if (lower === 'clear' || lower === 'cls') setLines([]);
@@ -126,7 +138,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     { id: 'monitor', label: 'Network Monitor', icon: Activity, hint: 'Simulovaná síťová telemetrie' }
   ];
   return <section className="laptop-lab">
-    <div className="lab-intro"><div><span className="lab-kicker">BOUNTY HUNTER // FIELD WORKSTATION</span><h2>{cs ? 'Vyber misi a připrav pracovní stanici' : 'Select a mission and prepare your workstation'}</h2><p>{cs ? 'Každá mise se řeší přímo v simulovaném notebooku. Otevírej aplikace, používej příkazy, piš skripty a sbírej důkazy.' : 'Every mission is completed inside a simulated laptop. Open apps, use commands, write scripts and collect evidence.'}</p></div><div className="lab-online"><i/> LOCAL VM ONLINE</div></div>
+    <div className="lab-intro"><div><span className="lab-kicker">BOUNTY HUNTER // FIELD WORKSTATION</span><h2>{cs ? 'Vyber misi a připrav pracovní stanici' : 'Select a mission and prepare your workstation'}</h2><p>{cs ? 'Každá mise se řeší přímo v simulovaném notebooku. Otevírej aplikace, používej příkazy, piš skripty a sbírej důkazy.' : 'Every mission is completed inside a simulated laptop. Open apps, use commands, write scripts and collect evidence.'}</p></div><div className="lab-online"><i/> LOCAL VM ONLINE<br/><span>SKILL XP: {earnedXp}</span></div></div>
     {!mission ? <div className="lab-mission-select">{missions.map((item, index) => <button key={item.id} className="lab-mission-card" onClick={() => chooseMission(item.id)}><span className="lab-mission-number">0{index + 1} / CONTRACT</span><h3>{item.title}</h3><p>{item.brief}</p><div><span>{item.target}</span><b>+{item.reward} XP <Play size={13}/></b></div></button>)}</div> :
     <div className="laptop-shell">
       <div className="laptop-bezel"><div className="laptop-camera"/><div className="laptop-screen">
