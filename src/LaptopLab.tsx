@@ -89,6 +89,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [completed, setCompleted] = useState<string[]>([]);
   const [evidence, setEvidence] = useState<string[]>([]);
   const [reportDrafted, setReportDrafted] = useState(false);
+  const [reportValidated, setReportValidated] = useState(false);
   const [url, setUrl] = useState('http://staging.noname-logistics.test');
   const [script, setScript] = useState('Write-Host "Starting reconnaissance..."\n$target = "staging.noname-logistics.test"\nWrite-Host "Target: $target"\n# Try: Resolve-DnsName $target');
   const [scriptOutput, setScriptOutput] = useState<string[]>([]);
@@ -243,19 +244,34 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'sql-lab analyze') {
       add({ text: 'SQLi LAB ANALYSIS · synthetic boolean differential detected', tone: 'warn' }, { text: 'True fixture: 200 / 1 result · False fixture: 200 / 0 results' }, { text: 'No payload sent to a real database. Confirm impact only in authorized environments.' });
       if (mission?.id === 'sqli-05') mark(2);
+    } else if (lower === 'evidence list') {
+      if (!evidence.length) add({ text: 'Evidence store je prázdný.', tone: 'warn' });
+      else add({ text: 'EVIDENCE STORE · ' + evidence.length + ' ITEM(S)', tone: 'good' }, ...evidence.map((item, index) => ({ text: `${index + 1}. ${item}` })));
+    } else if (lower.startsWith('select-string ') || lower.startsWith('grep ')) {
+      const successMatch = lower.includes('auth_success');
+      if (lower.includes('authentication.log') && successMatch) {
+        add({ text: 'logs/authentication.log:3:21:05:02 AUTH_SUCCESS user=svc_backup src=10.20.0.44', tone: 'warn' });
+        if (mission?.id === 'ir-03') mark(1);
+      } else if (lower.includes('authentication.log') && lower.includes('auth_fail')) {
+        add({ text: 'logs/authentication.log:1:21:04:12 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: 'logs/authentication.log:2:21:04:18 AUTH_FAIL user=svc_backup src=10.20.0.44' });
+        if (mission?.id === 'ir-03') mark(1);
+      } else add({ text: 'Select-String: žádná shoda v dostupných laboratorních souborech.', tone: 'muted' });
+    } else if (lower.startsWith('get-filehash ') || lower.startsWith('sha256sum ')) {
+      if (lower.includes('evidence/sample.bin')) add({ text: 'Algorithm : SHA256', tone: 'good' }, { text: 'Hash      : e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' }, { text: 'Path      : evidence/sample.bin' });
+      else add({ text: 'Soubor není součástí laboratorního inventáře.', tone: 'error' });
     } else if (lower === 'report draft') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else if (!evidence.length) add({ text: 'Nelze vytvořit report: nejprve ulož alespoň jeden konkrétní důkaz pomocí evidence add <název>.', tone: 'warn' });
       else {
-        setReportDrafted(true);
+        setReportDrafted(true); setReportValidated(false);
         add({ text: 'VULNERABILITY REPORT · DRAFT', tone: 'good' }, { text: 'Title: ' + mission.title }, { text: 'Affected asset: ' + mission.target }, { text: 'Evidence: ' + evidence.join(', ') }, { text: 'Reproduction: doplň přesné kroky a pozorované chování.' }, { text: 'Impact: popiš dopad na důvěrnost, integritu nebo dostupnost.' }, { text: 'Remediation: navrhni konkrétní opravu.' }, { text: 'Status: DRAFT — spusť report validate před odevzdáním.', tone: 'warn' });
       }
     } else if (lower === 'report validate') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
       else {
-        const missing = [!evidence.length ? 'evidence' : '', !reportDrafted ? 'report draft' : ''].filter(Boolean);
-        if (missing.length) add({ text: 'REPORT VALIDATION FAILED · chybí: ' + missing.join(', '), tone: 'error' });
-        else add({ text: 'REPORT VALIDATION PASSED · draft a důkazy jsou připravené.', tone: 'good' }, { text: 'Poznámka: před odevzdáním doplň reprodukční kroky, dopad a mitigaci.' });
+        const missing = [!evidence.length ? 'evidence' : '', !reportDrafted ? 'report draft' : '', ...mission.objectives.slice(0, -1).filter((_, index) => !completed.includes(mission.id + ':' + index)).map((objective, index) => objective)].filter(Boolean);
+        if (missing.length) { setReportValidated(false); add({ text: 'REPORT VALIDATION FAILED · nedokončeno: ' + missing.join(' | '), tone: 'error' }); }
+        else { setReportValidated(true); add({ text: 'REPORT VALIDATION PASSED · checklist, důkazy a draft jsou připravené.', tone: 'good' }, { text: 'Poznámka: obsah reportu stále vyžaduje odborné posouzení reprodukce, dopadu a mitigace.' }); }
       }
     } else if (lower === 'wireless summary') {
       add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
@@ -318,7 +334,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
       if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08' || mission?.id === 'ssrf-09' || mission?.id === 'tls-10') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
-      else if (!evidence.length || !reportDrafted) add({ text: 'Odevzdání zamítnuto: potřebuješ alespoň jeden důkaz a vytvořený report. Použij evidence add, report draft a report validate.', tone: 'warn' });
+      else if (!evidence.length || !reportDrafted || !reportValidated) add({ text: 'Odevzdání zamítnuto: potřebuješ důkazy, draft a úspěšnou validaci. Použij evidence list, report draft a report validate.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= (mission.id === 'recon-01' ? mission.objectives.length - 1 : mission.objectives.length - 1)) {
         if (submitted.includes(mission.id)) { add({ text: 'Tato mise už byla odevzdána.', tone: 'warn' }); return; }
         mark(mission.objectives.length - 1);
@@ -352,7 +368,7 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     setScriptOutput(output.length ? output : ['Skript proběhl, ale nevypsal žádný výstup.']);
   };
   const chooseMission = (id: string) => {
-    setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
+    setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setReportValidated(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
   };
   const appDefs: { id: AppId; label: string; icon: typeof Terminal; hint: string }[] = [
     { id: 'powershell', label: 'PowerShell', icon: Terminal, hint: 'Terminál a příkazová řádka' },
