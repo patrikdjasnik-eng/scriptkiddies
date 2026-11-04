@@ -21,6 +21,6 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       - name: Build and enforce 10 GiB package limit
         run: npm run build
