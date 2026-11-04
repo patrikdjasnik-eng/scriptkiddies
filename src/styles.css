@@ -252,3 +252,28 @@
 .lab-disclaimer svg{color:#d7b36e;flex:0 0 auto}
 @media(max-width:850px){.lab-mission-select{grid-template-columns:1fr 1fr}.laptop-screen{min-height:390px}.desktop-window{left:17%;width:68%}.desktop-mission-widget{width:180px}.lab-below{grid-template-columns:1fr}}
 @media(max-width:600px){.lab-intro{flex-direction:column}.lab-mission-select{grid-template-columns:1fr}.laptop-shell{padding:7px 7px 0;border-radius:8px 8px 3px 3px}.laptop-bezel{padding:10px 6px 6px}.laptop-screen{aspect-ratio:4/5;min-height:560px}.desktop-topbar{font-size:6px;gap:5px;padding:0 5px}.desktop-topbar>span:nth-child(2){display:none}.desktop-topbar button{margin-left:auto}.desktop-icons{grid-template-columns:62px;left:4px;top:8px}.desktop-icons button{width:58px;min-height:56px}.desktop-icons button b{font-size:6px}.desktop-mission-widget{top:8px;right:7px;width:calc(100% - 82px);padding:8px}.desktop-window,.editor-window,.browser-window{left:5%;top:28%;width:90%;height:65%;min-height:260px}.task-clock{font-size:6px}.desktop-taskbar{gap:0;padding:0 3px}.desktop-taskbar button{padding:0 5px;font-size:6px}.desktop-taskbar button:not(.task-start){max-width:75px;overflow:hidden}.powershell-input>span{font-size:6px}.powershell-input input{font-size:7px}}
+
+
+/* Kali-style simulated toolkit and beginner onboarding */
+.toolkit-window,.help-window{left:12%;top:7%;width:78%;height:86%}
+.toolkit-scroll,.help-scroll{overflow:auto;padding:12px;flex:1}
+.toolkit-scroll section{margin-bottom:15px}
+.toolkit-scroll h4{font:8px var(--mono);letter-spacing:1px;color:var(--green);margin:3px 0 8px}
+.toolkit-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.toolkit-cards article{padding:9px;background:#101a1e;border:1px solid var(--line);min-width:0}
+.toolkit-cards article>b{font:9px var(--mono);color:#d8e6dc}
+.toolkit-cards article p{font-size:8px;color:#91a095;margin:5px 0 8px}
+.toolkit-cards article code{display:block;padding:6px;background:#080e11;color:#b9e48d;font:7px/1.5 var(--mono);overflow-wrap:anywhere}
+.toolkit-cards article button,.help-steps button{margin-top:7px;padding:6px 8px;background:#c6f36a12;border:1px solid #c6f36a44;color:var(--green);font:7px var(--mono)}
+.toolkit-safety{padding:8px 12px;border-top:1px solid var(--line);font:7px/1.5 var(--mono);color:#d9b878}
+.help-scroll h3{font-size:13px;margin:2px 0 8px}
+.help-scroll>p{font-size:9px;line-height:1.6;color:#9aa99e}
+.help-scroll>label{display:flex;align-items:center;gap:7px;margin:10px 0;padding:8px;background:#111c20;font:8px var(--mono);color:#b8c8bc}
+.help-steps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.help-steps article{padding:10px;background:#101a1e;border:1px solid var(--line)}
+.help-steps article>b{font:8px var(--mono);color:var(--green)}
+.help-steps article p{font-size:8px;line-height:1.6;color:#9aa89d;min-height:38px}
+.help-callout{margin-top:10px;padding:10px;border:1px solid #d8b36a44;background:#d8b36a0b}
+.help-callout b{font:8px var(--mono);color:#e3bf7b}
+.help-callout p{font-size:8px;line-height:1.6;color:#a9b4a9;margin:5px 0 0}
+@media(max-width:600px){.toolkit-window,.help-window{left:3%;top:24%;width:94%;height:70%}.toolkit-cards,.help-steps{grid-template-columns:1fr}.help-steps article p{min-height:0}}
