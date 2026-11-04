@@ -20,7 +20,8 @@
   <img src="https://img.shields.io/badge/Lucide-Icons-F56565?style=flat-square" alt="Lucide icons" />
   <img src="https://img.shields.io/badge/Status-Active%20Development-orange?style=flat-square" alt="Active development" />
 </p>
-<img width="1919" height="987" alt="Bounty Hunter – screenshot hry" src="https://github.com/user-attachments/assets/1614927d-0f01-488b-baed-9c97be2405c1" />
+<img width="1909" height="991" alt="image" src="https://github.com/user-attachments/assets/2e412039-c4eb-49b6-b723-21cbc985ddf6" />
+
 ---
 
 ## 🧭 Overview
