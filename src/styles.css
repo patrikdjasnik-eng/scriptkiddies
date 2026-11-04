@@ -346,3 +346,65 @@
 .bounty-rules b{font:7px var(--mono);color:#d9bd7c}
 .bounty-rules p{font-size:8px;line-height:1.5;color:#a9b4a9;margin:5px 0 0}
 @media(max-width:760px){.internet-window,.bounty-window{left:3%;top:22%;width:94%;height:73%}.bounty-register{grid-template-columns:1fr}.bounty-programs{grid-template-columns:1fr}.bounty-programs article p,.bounty-programs article>small{min-height:0}.bounty-hero{align-items:flex-start}.search-home{padding:15px 8px}.search-results{padding:10px}.search-logo{font-size:25px}}
+
+
+/* Linux desktop shell — GNOME-inspired workstation chrome */
+.laptop-shell{padding:15px 16px 0;background:linear-gradient(145deg,#48504d 0%,#202827 42%,#39413f 100%);border-color:#9ba9a044;box-shadow:0 32px 85px #000a,0 2px 0 #aeb8b055 inset}
+.laptop-bezel{padding:17px 17px 14px;border-radius:11px 11px 3px 3px;background:linear-gradient(145deg,#080b0d,#020405);border-color:#77817a66}
+.laptop-camera{top:6px;width:5px;height:5px;background:#536b60;box-shadow:0 0 0 2px #151b1a}
+.laptop-screen{aspect-ratio:16/9;min-height:480px;background:#211b2d;border-color:#425047}
+.desktop-topbar{height:31px;gap:0;padding:0 9px;background:linear-gradient(180deg,#24212c,#171923);border-bottom:1px solid #ffffff20;color:#e7e1ec;font:8px 'DM Mono',monospace}
+.desktop-topbar .linux-activities{height:23px;display:flex;align-items:center;gap:5px;padding:0 8px;border:1px solid transparent;background:transparent;color:#f0e9f5;font:8px 'DM Mono',monospace}
+.desktop-topbar .linux-activities:hover,.desktop-topbar .linux-session:hover{background:#ffffff17}
+.desktop-topbar .linux-host{margin-left:12px;color:#bcb3c8;font-size:7px;letter-spacing:.8px}
+.desktop-topbar .linux-clock{position:absolute;left:50%;transform:translateX(-50%);color:#f1edf3;font-size:8px}
+.desktop-topbar .linux-tray{margin-left:auto;display:flex;align-items:center;gap:8px;color:#d8d1df}
+.desktop-topbar .linux-tray i{width:5px;height:5px;margin:0;background:#a8e477;border-radius:50%;box-shadow:0 0 7px #a8e477}
+.desktop-topbar .linux-session{width:25px;height:23px;margin-left:10px;display:grid;place-items:center;border:1px solid #ffffff1c;background:transparent;color:#e6dfea;padding:0}
+.desktop-area{inset:31px 0 43px;background:radial-gradient(ellipse at 78% 22%,#8054a0 0%,transparent 35%),radial-gradient(ellipse at 22% 85%,#d05b42 0%,transparent 40%),linear-gradient(135deg,#322544 0%,#24243b 48%,#172c36 100%)}
+.desktop-area:before{background-image:linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:32px 32px}
+.desktop-icons{top:13px;left:12px;grid-template-columns:repeat(2,76px);grid-auto-rows:67px;gap:4px}
+.desktop-icons button{width:72px;min-height:63px;gap:4px;color:#fff;text-shadow:0 1px 3px #171020;padding:4px}
+.desktop-icons button:hover,.desktop-icons button.selected{background:#f6efff25;border-color:#ffffff40}
+.desktop-icons button>span.linux-app-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:9px;color:#fff;filter:drop-shadow(0 3px 5px #100b18a8);border:1px solid #ffffff38;background:linear-gradient(145deg,#596b83,#29364d)}
+.desktop-icons .app-icon-0{background:linear-gradient(145deg,#4c596c,#1c2637)!important}
+.desktop-icons .app-icon-1{background:linear-gradient(145deg,#a45e47,#693a46)!important}
+.desktop-icons .app-icon-2{background:linear-gradient(145deg,#5c9b9c,#285a68)!important}
+.desktop-icons .app-icon-3{background:linear-gradient(145deg,#e4b85c,#a96c32)!important}
+.desktop-icons .app-icon-4{background:linear-gradient(145deg,#668cc4,#344c86)!important}
+.desktop-icons .app-icon-5{background:linear-gradient(145deg,#5caa78,#28694c)!important}
+.desktop-icons .app-icon-6{background:linear-gradient(145deg,#7e72c8,#4b3d8e)!important}
+.desktop-icons .app-icon-7{background:linear-gradient(145deg,#c58a58,#80533e)!important}
+.desktop-icons .app-icon-8{background:linear-gradient(145deg,#5e9bd0,#315a91)!important}
+.desktop-icons .app-icon-9{background:linear-gradient(145deg,#8e6eaa,#59436f)!important}
+.desktop-icons button b{font:7px/1.15 var(--mono);font-weight:400;max-width:74px;text-align:center}
+.desktop-mission-widget{right:15px;top:14px;background:#171321d9;border-color:#e8c7ff55;box-shadow:0 8px 30px #10091e55}
+.desktop-mission-widget>span{color:#d8c0f4}
+.mission-progress{background:#4a3b55}.mission-progress i{background:#c9a4ef}
+.desktop-window{border-color:#8d83a2;box-shadow:0 18px 55px #090611b8;border-radius:7px}
+.desktop-window-title{background:linear-gradient(180deg,#383244,#292536);color:#f0eaf4}
+.desktop-window-title svg{color:#d0b0f0}
+.desktop-taskbar{height:43px;justify-content:center;gap:5px;padding:0 10px;background:#171520eF;border-top:1px solid #ffffff2a}
+.desktop-taskbar button{height:32px;min-width:34px;justify-content:center;gap:7px;padding:0 9px;border-radius:7px;color:#d4ccdc;font:7px var(--mono);transition:background .15s,transform .15s}
+.desktop-taskbar button:hover{background:#ffffff19;transform:translateY(-2px)}
+.desktop-taskbar button.active{background:#c7a2e52b;border-color:#d7b5f055;color:#f0dfff}
+.desktop-taskbar button span{display:none}
+.desktop-taskbar .task-start{color:#e1c7fa;background:#ffffff12}
+.desktop-taskbar .task-clock{position:absolute;right:12px;font:6px var(--mono);color:#a99fb4;letter-spacing:.4px}
+.laptop-hinge{height:10px;margin:0 6%;background:linear-gradient(#87908a,#303a37 55%,#141a19);box-shadow:0 3px 7px #0008}
+.laptop-base{height:17px;margin:0 -2%;background:linear-gradient(180deg,#66716c 0%,#313b37 38%,#151b19 85%);border-radius:0 0 48% 48%;box-shadow:0 12px 18px #0008}
+.laptop-trackpad{left:40%;width:20%;height:9px;border-color:#aab4ad66;border-radius:0 0 7px 7px}
+@media(max-width:760px){
+ .laptop-screen{min-height:390px}
+ .desktop-topbar .linux-host{display:none}
+ .desktop-topbar .linux-clock{font-size:7px}
+ .desktop-topbar .linux-tray{gap:5px}
+ .desktop-icons{grid-template-columns:repeat(2,58px);grid-auto-rows:59px;left:5px;top:7px}
+ .desktop-icons button{width:56px;min-height:56px}
+ .desktop-icons button>span.linux-app-icon{width:27px;height:27px;border-radius:7px}
+ .desktop-icons button>span.linux-app-icon svg{width:16px;height:16px}
+ .desktop-icons button b{font-size:5px}
+ .desktop-mission-widget{right:7px;top:7px;width:145px;padding:7px}
+ .desktop-taskbar{justify-content:flex-start;overflow-x:auto}
+ .desktop-taskbar .task-clock{display:none}
+}

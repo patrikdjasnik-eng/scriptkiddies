@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X, Volume2, BatteryFull, Grid3X3 } from 'lucide-react';
 
 type AppId = 'powershell' | 'editor' | 'browser' | 'files' | 'knowledge' | 'monitor' | 'toolkit' | 'help' | 'search' | 'bounty';
 type Mission = { id: string; title: string; brief: string; target: string; reward: number; objectives: string[] };
@@ -12,7 +12,9 @@ const missions: Mission[] = [
   { id: 'sqli-05', title: 'Podezřelý parametr', brief: 'Analyzuj chování parametru v lokální demonstrační aplikaci. Rozliš chybu validace od skutečného bezpečnostního dopadu.', target: 'catalog.greencart.test', reward: 440, objectives: ['Prohlédni endpoint katalogu.', 'Zkontroluj běžnou odpověď aplikace.', 'Spusť bezpečnou laboratorní kontrolu SQL indikátoru.', 'Vysvětli dopad a ulož důkaz.', 'Odevzdej report.'] },
   { id: 'cloud-06', title: 'Veřejný sklad souborů', brief: 'Prověř fiktivní cloudové úložiště. Najdi veřejný bucket, zkontroluj metadata a navrhni bezpečnou konfiguraci.', target: 'files.cloudnote.test', reward: 520, objectives: ['Vyhledej informace o cloud storage v BH Search.', 'Proveď simulovanou kontrolu bucketu.', 'Zkontroluj veřejná oprávnění.', 'Ulož konfigurační důkaz.', 'Odevzdej doporučení.'] },
   { id: 'wifi-07', title: 'Rádiové ticho', brief: 'Analyzuj připravený Wi-Fi capture a vysvětli, co lze a nelze z metadat handshake vyvodit.', target: 'wireless-lab.local', reward: 280, objectives: ['Otevři katalog wireless nástrojů.', 'Analyzuj syntetický handshake capture.', 'Prohlédni související pakety.', 'Ulož analytický záznam.', 'Odevzdej závěry.'] },
-  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] }
+  { id: 'api-08', title: 'Zapomenutý token', brief: 'Prozkoumej bezpečnost API tokenů v sandboxu. Identifikuj nadměrná oprávnění a doporuč rotaci a omezení scope.', target: 'auth.cloudnote.test', reward: 480, objectives: ['Otevři dokumentaci autentizace.', 'Zkontroluj metadata demonstračního tokenu.', 'Vyhodnoť jeho oprávnění.', 'Zaznamenej bezpečný důkaz.', 'Odevzdej report.'] },
+  { id: 'ssrf-09', title: 'Webhook mimo kontrolu', brief: 'Prověř validaci URL u demonstrační webhook služby. Rozpoznej nebezpečnou důvěru v uživatelský vstup a navrhni ochranu proti SSRF.', target: 'hooks.cloudnote.test', reward: 560, objectives: ['Otevři dokumentaci webhook služby.', 'Proveď bezpečnou kontrolu URL validátoru.', 'Prohlédni síťovou politiku sandboxu.', 'Ulož důkaz bez odesílání požadavku.', 'Odevzdej doporučení.'] },
+  { id: 'tls-10', title: 'Slabé místo v TLS', brief: 'Zkontroluj TLS konfiguraci fiktivního portálu. Vyhodnoť protokoly, certifikát a bezpečnostní hlavičky.', target: 'portal.cloudnote.test', reward: 380, objectives: ['Spusť kontrolu TLS profilu.', 'Zkontroluj HTTP bezpečnostní hlavičky.', 'Vyhodnoť doporučenou konfiguraci.', 'Ulož konfigurační důkaz.', 'Odevzdej report.'] }
 ];
 
 const internetArticles = [
@@ -21,7 +23,9 @@ const internetArticles = [
   { title: 'IDOR a Broken Access Control', category: 'WEB VULNERABILITIES', tags: 'idor b access control authorization api object reference', excerpt: 'Jak chápat chyby autorizace a bezpečně ověřit oddělení uživatelských dat.', body: 'IDOR vzniká, když aplikace zpřístupní objekt podle identifikátoru bez kontroly oprávnění. V autorizovaném labu porovnej přístup dvou syntetických účtů. Nikdy nezkoušej cizí reálná data. Důkaz má ukazovat chybu autorizace, nikoliv obsah citlivých záznamů.' },
   { title: 'Subdomain enumeration – metodika', category: 'RECON', tags: 'recon dns subdomain enumeration nmap scope', excerpt: 'Pasivní a aktivní průzkum, DNS záznamy a kontrola rozsahu programu.', body: 'Začni rozsahem programu a pasivními zdroji. Každý nalezený hostname ověř proti scope. DNS záznam není automaticky povolením k testování. Eviduj zdroj objevu, čas a stav ověření.' },
   { title: 'Jak napsat kvalitní vulnerability report', category: 'REPORTING', tags: 'report cvss impact reproduction steps remediation', excerpt: 'Struktura reportu: shrnutí, dopad, reprodukce, důkaz a doporučená oprava.', body: 'Dobrý report obsahuje jasný titulek, stručné shrnutí, dotčené aktivum, předpoklady, kroky reprodukce v povoleném prostředí, očekávané a skutečné chování, bezpečný důkaz dopadu, závažnost s odůvodněním a návrh nápravy.' },
-  { title: 'Wi-Fi security: WPA2 handshake v PCAP', category: 'WIRELESS', tags: 'wifi wireless aircrack handshake pcap wpa2', excerpt: 'Co lze vyčíst z metadat zachyceného handshake a jak funguje laboratorní analýza.', body: 'Handshake je součást procesu navázání zabezpečeného spojení. V této výukové laboratoři analyzujeme pouze syntetický PCAP a metadata rámců. Skutečné zachytávání provozu a testování bez výslovného oprávnění není součástí cvičení.' }
+  { title: 'Wi-Fi security: WPA2 handshake v PCAP', category: 'WIRELESS', tags: 'wifi wireless aircrack handshake pcap wpa2', excerpt: 'Co lze vyčíst z metadat zachyceného handshake a jak funguje laboratorní analýza.', body: 'Handshake je součást procesu navázání zabezpečeného spojení. V této výukové laboratoři analyzujeme pouze syntetický PCAP a metadata rámců. Skutečné zachytávání provozu a testování bez výslovného oprávnění není součástí cvičení.' },
+  { title: 'SSRF: bezpečná validace webhook URL', category: 'WEB VULNERABILITIES', tags: 'ssrf webhook url validation redirect allowlist', excerpt: 'Proč je nutné ověřovat cílovou adresu, DNS odpovědi i každý redirect.', body: 'Server-Side Request Forgery (SSRF) může vzniknout, když server načítá URL dodanou uživatelem bez dostatečné kontroly. Obrana kombinuje allowlist důvěryhodných domén, blokování loopback/private/link-local rozsahů, kontrolu DNS po překladu, opakovanou validaci redirectů a omezení odchozí síťové komunikace. Samotná blokace textového řetězce nestačí.' },
+  { title: 'TLS hardening a bezpečnostní hlavičky', category: 'INFRASTRUCTURE', tags: 'tls ssl certificate hsts csp http headers', excerpt: 'Jak vyhodnotit zastaralé protokoly, platnost certifikátu a HSTS.', body: 'Moderní služba by měla zakázat TLS 1.0 a 1.1, podporovat TLS 1.2 a 1.3, automaticky obnovovat certifikáty a správně obsluhovat HTTPS. HSTS vynucuje HTTPS v prohlížeči, ale zapínej ho až po ověření celé domény a všech relevantních subdomén. Nález vždy posuzuj v kontextu skutečného dopadu.' }
 ];
 const bountyPrograms = [
   { name: 'NoName Logistics', domain: '*.noname-logistics.test', level: 'BEGINNER', reward: '100–800 XP', scope: 'Web portal, staging API, test accounts', description: 'Fiktivní logistická platforma. Nauč se hledat chyby v API, přístupových právech a konfiguraci.' },
@@ -54,6 +58,11 @@ const toolGroups = [
     { name: 'ffuf', summary: 'Fuzzing cest z bezpečného slovníku v labu', example: 'ffuf -w common.txt -u https://staging.noname-logistics.test/FUZZ' },
     { name: 'semgrep', summary: 'Statická analýza ukázkového zdrojového kódu', example: 'semgrep --config auto ./demo-app' }
   ]},
+  { title: 'WEB & INFRASTRUCTURE HARDENING', tools: [
+    { name: 'testssl', summary: 'Audit TLS profilu syntetického endpointu', example: 'testssl portal.cloudnote.test' },
+    { name: 'httpx', summary: 'Kontrola HTTP metadat v inventáři labu', example: 'httpx -u https://portal.cloudnote.test -title -status-code' },
+    { name: 'ssrf-lab', summary: 'Kontrola URL validace bez odeslání požadavků', example: 'ssrf-lab check webhook-target' }
+  ]},
   { title: 'WIRELESS & FORENSICS', tools: [
     { name: 'aircrack-ng', summary: 'Analýza metadat syntetického Wi-Fi capture', example: 'aircrack-ng --analyze lab-handshake.cap' },
     { name: 'wireshark', summary: 'Otevření připraveného PCAP z laboratoře', example: 'wireshark lab-traffic.pcap' },
@@ -79,12 +88,18 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [lines, setLines] = useState<Line[]>(initialLines);
   const [completed, setCompleted] = useState<string[]>([]);
   const [evidence, setEvidence] = useState<string[]>([]);
+  const [reportDrafted, setReportDrafted] = useState(false);
+  const [reportValidated, setReportValidated] = useState(false);
   const [url, setUrl] = useState('http://staging.noname-logistics.test');
   const [script, setScript] = useState('Write-Host "Starting reconnaissance..."\n$target = "staging.noname-logistics.test"\nWrite-Host "Target: $target"\n# Try: Resolve-DnsName $target');
   const [scriptOutput, setScriptOutput] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
-  const [earnedXp, setEarnedXp] = useState(0);
-  const [submitted, setSubmitted] = useState<string[]>([]);
+  const [earnedXp, setEarnedXp] = useState(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Number.isFinite(saved.earnedXp) && saved.earnedXp >= 0 ? saved.earnedXp : 0; } catch { return 0; }
+  });
+  const [submitted, setSubmitted] = useState<string[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Array.isArray(saved.submitted) ? saved.submitted.filter((id: unknown): id is string => typeof id === 'string' && missions.some(mission => mission.id === id)) : []; } catch { return []; }
+  });
   const [showBeginnerTips, setShowBeginnerTips] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArticle, setSelectedArticle] = useState<(typeof internetArticles)[number] | null>(null);
@@ -93,7 +108,12 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [registeredProfile, setRegisteredProfile] = useState<{name:string; email:string; handle:string} | null>(() => {
     try { const saved = localStorage.getItem('bh-lab-bounty-profile'); return saved ? JSON.parse(saved) : null; } catch { return null; }
   });
-  const [joinedPrograms, setJoinedPrograms] = useState<string[]>([]);
+  const [joinedPrograms, setJoinedPrograms] = useState<string[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Array.isArray(saved.joinedPrograms) ? saved.joinedPrograms.filter((name: unknown): name is string => typeof name === 'string' && bountyPrograms.some(program => program.name === name)) : []; } catch { return []; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('bh-lab-progress', JSON.stringify({ earnedXp, submitted, joinedPrograms })); } catch { /* Storage may be disabled; the game remains playable for this session. */ }
+  }, [earnedXp, submitted, joinedPrograms]);
   const mission = missions.find(item => item.id === missionId) ?? null;
   const objectiveIndex = mission ? completed.filter(id => id.startsWith(mission.id + ':')).length : 0;
   const progress = mission ? Math.min(100, Math.round(objectiveIndex / mission.objectives.length * 100)) : 0;
@@ -115,7 +135,8 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     add({ text: prompt + command, tone: 'good' });
     const lower = command.toLowerCase();
     if (lower === 'help' || lower === 'get-help') {
-      add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
+      add({ text: 'ZÁKLADNÍ PŘÍKAZY', tone: 'good' }, { text: 'whoami · pwd · ls · cd · ipconfig · nslookup <host>' }, { text: 'nmap · dig · whois · gobuster · nikto · sqlmap · burpsuite · testssl · httpx' },
+      { text: 'ssrf-lab · cloud-audit · token inspect · sql-lab' }, { text: 'aircrack-ng --analyze · wireshark · tshark · john --show · hashcat --show' }, { text: 'evidence add <název> · evidence list · report draft · report validate · submit' }, { text: 'help <nástroj> zobrazí vysvětlení · toolkit otevře katalog nástrojů · guide otevře průvodce' }, { text: 'Příkazy pracují pouze se syntetickými daty této výukové laboratoře.', tone: 'muted' });
     } else if (lower === 'toolkit') {
       setActiveApp('toolkit');
       add({ text: 'Otevírám katalog výukových nástrojů.', tone: 'good' }); if (mission?.id === 'wifi-07') mark(0);
@@ -138,7 +159,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         'aircrack-ng': 'Aircrack-ng zde pouze analyzuje syntetický capture a vysvětlí metadata handshake. Neprovádí zachytávání provozu ani lámání hesel.',
         wireshark: 'Wireshark je analyzátor paketů. V labu otevři připravený soubor: wireshark lab-traffic.pcap',
         sqlmap: 'sqlmap automatizuje testování SQL injection. Tato mise pouze vysvětluje indikátory na syntetické odpovědi.',
-        john: 'John the Ripper umí auditovat heslové hashe. Zde pracuje jen s demonstrační sadou: john --show lab-demo-hashes.txt'
+        john: 'John the Ripper umí auditovat heslové hashe. Zde pracuje jen s demonstrační sadou: john --show lab-demo-hashes.txt',
+        testssl: 'Testssl kontroluje TLS protokoly a konfiguraci certifikátu. V této hře používá pouze syntetický profil: testssl portal.cloudnote.test',
+        'ssrf-lab': 'Výukový validátor webhook URL. Neodesílá síťové požadavky: ssrf-lab check webhook-target'
       };
       add({ text: descriptions[name] ?? 'Nástroj není v rychlé nápovědě. Otevři toolkit a vyber kategorii.', tone: descriptions[name] ? 'good' : 'warn' });
     } else if (lower === 'whoami') {
@@ -160,11 +183,17 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
         add({ text: 'Starting Nmap 7.94 ( SIMULATED LAB BUILD )' }, { text: 'Host is up (0.012s simulated latency).' }, { text: 'PORT     STATE SERVICE  VERSION' }, { text: '22/tcp   open  ssh      OpenSSH 9.2' }, { text: '80/tcp   open  http     nginx 1.24.0' }, { text: '443/tcp  open  https    nginx 1.24.0' }, { text: '3000/tcp open  http     Node.js API (simulated)' }, { text: 'Scan complete: 1 host, 4 open ports.', tone: 'good' }); if (mission?.id === 'recon-01') mark(3);
       }
     } else if (lower.startsWith('curl ')) {
-      if (lower.includes('/api/docs') || lower.includes('staging.noname-logistics.test')) {
-        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'x-lab-route: /api/docs' }, { text: 'Simulovaná odpověď: API documentation is publicly accessible.', tone: 'warn' });
+      const allowedHost = ['staging.noname-logistics.test', 'portal.cloudnote.test', 'hooks.cloudnote.test', 'catalog.greencart.test', 'files.cloudnote.test'].some(host => lower.includes(host));
+      const headersOnly = /(^|\s)-I(\s|$)/i.test(command);
+      const docsPath = lower.includes('/api/docs');
+      if (!allowedHost) add({ text: 'curl: cíl není v inventáři izolované laboratoře.', tone: 'error' });
+      else if (headersOnly) {
+        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'date: Tue, 05 Nov 2026 21:04:15 GMT' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'content-length: 1842' }, { text: 'connection: keep-alive' }, { text: 'x-lab-route: /' });
+        if (mission?.id === 'web-02') mark(1);
+      } else if (docsPath) {
+        add({ text: 'HTTP/1.1 200 OK', tone: 'good' }, { text: 'server: nginx/1.24.0' }, { text: 'content-type: text/html; charset=utf-8' }, { text: 'x-lab-route: /api/docs' }, { text: '--- RESPONSE BODY ---' }, { text: 'OpenAPI 3.0 · GET /api/v1/shipments/{id} · GET /api/v1/tracking/{code}', tone: 'warn' });
         if (mission?.id === 'web-02') mark(2);
-      } else add({ text: 'curl: URL není součástí lokálního labu.', tone: 'error' });
-      if (lower.includes('-i')) mark(1);
+      } else add({ text: 'HTTP/1.1 404 Not Found', tone: 'warn' }, { text: 'route not present in this application fixture' });
     } else if (lower.startsWith('api get /me') || lower.startsWith('curl /api/me')) {
       add({ text: 'HTTP/1.1 200 OK · account=researcher-a · role=customer', tone: 'good' }, { text: 'order_ids: [GC-1042] · owner: researcher-a' });
       if (mission?.id === 'idor-04') mark(0);
@@ -192,15 +221,64 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'token explain') {
       add({ text: 'Least privilege: issue only required scopes, set short expiry, rotate credentials and audit usage.' });
       if (mission?.id === 'api-08') mark(2);
+    } else if (lower === 'webhook docs') {
+      add({ text: 'WEBHOOK SERVICE GUIDE · SIMULATED', tone: 'good' }, { text: 'Endpoint accepts a destination URL and schedules an outbound callback.' }, { text: 'Security note: destination validation must run after canonicalization and on every redirect.' });
+      if (mission?.id === 'ssrf-09') mark(0);
+    } else if (lower === 'ssrf-lab check webhook-target') {
+      add({ text: 'URL VALIDATION FIXTURE · NO NETWORK REQUEST SENT', tone: 'good' }, { text: 'Input profile: redirect-aware validation = DISABLED', tone: 'warn' }, { text: 'Finding: validator checks the initial hostname but does not re-check redirect destinations.' }, { text: 'Impact depends on reachable internal services; this lab does not access any internal address.' });
+      if (mission?.id === 'ssrf-09') mark(1);
+    } else if (lower === 'ssrf-lab policy') {
+      add({ text: 'SANDBOX EGRESS POLICY', tone: 'good' }, { text: 'Default: DENY · Allowlist: approved webhook provider domains only' }, { text: 'Required controls: block loopback, private, link-local and metadata ranges; re-resolve and validate every redirect; enforce egress firewall.' });
+      if (mission?.id === 'ssrf-09') mark(2);
+    } else if (lower.startsWith('testssl ')) {
+      add({ text: 'testssl.sh · SYNTHETIC TLS PROFILE', tone: 'good' }, { text: 'TLS 1.0: offered (legacy protocol)', tone: 'warn' }, { text: 'TLS 1.2 / TLS 1.3: supported' }, { text: 'Certificate fixture: valid · renewal window: 21 days' }, { text: 'No remote host was contacted.', tone: 'muted' });
+      if (mission?.id === 'tls-10') mark(0);
+    } else if (lower.startsWith('httpx ')) {
+      add({ text: 'httpx · LOCAL INVENTORY FIXTURE', tone: 'good' }, { text: 'https://portal.cloudnote.test [200] [CloudNote Portal]' }, { text: 'Technology hints: nginx · TLS enabled · no live probe performed' });
+    } else if (lower === 'tls-audit portal.cloudnote.test') {
+      add({ text: 'TLS CONFIGURATION AUDIT · SYNTHETIC FIXTURE', tone: 'good' }, { text: 'TLS 1.0: ENABLED (legacy)', tone: 'warn' }, { text: 'TLS 1.2: ENABLED · TLS 1.3: ENABLED' }, { text: 'Certificate: valid in lab fixture · expires in 21 days' });
+      if (mission?.id === 'tls-10') mark(0);
+    } else if (lower === 'tls-audit headers portal.cloudnote.test') {
+      add({ text: 'HTTP SECURITY HEADERS · SYNTHETIC FIXTURE', tone: 'good' }, { text: 'Strict-Transport-Security: MISSING', tone: 'warn' }, { text: 'Content-Security-Policy: present · X-Content-Type-Options: nosniff' });
+      if (mission?.id === 'tls-10') mark(1);
+    } else if (lower === 'tls-audit explain') {
+      add({ text: 'HARDENING: disable TLS 1.0/1.1, prefer TLS 1.2/1.3, automate certificate renewal and add HSTS after validating HTTPS coverage.' });
+      if (mission?.id === 'tls-10') mark(2);
     } else if (lower === 'sql-lab check catalog?id=1') {
       add({ text: 'HTTP 200 · item=1 · query parameter accepted', tone: 'good' }, { text: 'Baseline response captured.' });
       if (mission?.id === 'sqli-05') mark(1);
     } else if (lower === 'sql-lab analyze') {
       add({ text: 'SQLi LAB ANALYSIS · synthetic boolean differential detected', tone: 'warn' }, { text: 'True fixture: 200 / 1 result · False fixture: 200 / 0 results' }, { text: 'No payload sent to a real database. Confirm impact only in authorized environments.' });
       if (mission?.id === 'sqli-05') mark(2);
+    } else if (lower === 'evidence list') {
+      if (!evidence.length) add({ text: 'Evidence store je prázdný.', tone: 'warn' });
+      else add({ text: 'EVIDENCE STORE · ' + evidence.length + ' ITEM(S)', tone: 'good' }, ...evidence.map((item, index) => ({ text: `${index + 1}. ${item}` })));
+    } else if (lower.startsWith('select-string ') || lower.startsWith('grep ')) {
+      const successMatch = lower.includes('auth_success');
+      if (lower.includes('authentication.log') && successMatch) {
+        add({ text: 'logs/authentication.log:3:21:05:02 AUTH_SUCCESS user=svc_backup src=10.20.0.44', tone: 'warn' });
+        if (mission?.id === 'ir-03') mark(1);
+      } else if (lower.includes('authentication.log') && lower.includes('auth_fail')) {
+        add({ text: 'logs/authentication.log:1:21:04:12 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: 'logs/authentication.log:2:21:04:18 AUTH_FAIL user=svc_backup src=10.20.0.44' });
+        if (mission?.id === 'ir-03') mark(1);
+      } else add({ text: 'Select-String: žádná shoda v dostupných laboratorních souborech.', tone: 'muted' });
+    } else if (lower.startsWith('get-filehash ') || lower.startsWith('sha256sum ')) {
+      if (lower.includes('evidence/sample.bin')) add({ text: 'Algorithm : SHA256', tone: 'good' }, { text: 'Hash      : e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' }, { text: 'Path      : evidence/sample.bin' });
+      else add({ text: 'Soubor není součástí laboratorního inventáře.', tone: 'error' });
     } else if (lower === 'report draft') {
-      add({ text: 'REPORT DRAFT CREATED', tone: 'good' }, { text: 'Summary · affected asset · reproduction · impact · remediation' });
-      if (mission) mark(mission.objectives.length - 2);
+      if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
+      else if (!evidence.length) add({ text: 'Nelze vytvořit report: nejprve ulož alespoň jeden konkrétní důkaz pomocí evidence add <název>.', tone: 'warn' });
+      else {
+        setReportDrafted(true); setReportValidated(false);
+        add({ text: 'VULNERABILITY REPORT · DRAFT', tone: 'good' }, { text: 'Title: ' + mission.title }, { text: 'Affected asset: ' + mission.target }, { text: 'Evidence: ' + evidence.join(', ') }, { text: 'Reproduction: doplň přesné kroky a pozorované chování.' }, { text: 'Impact: popiš dopad na důvěrnost, integritu nebo dostupnost.' }, { text: 'Remediation: navrhni konkrétní opravu.' }, { text: 'Status: DRAFT — spusť report validate před odevzdáním.', tone: 'warn' });
+      }
+    } else if (lower === 'report validate') {
+      if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
+      else {
+        const missing = [!evidence.length ? 'evidence' : '', !reportDrafted ? 'report draft' : '', ...mission.objectives.slice(0, -1).filter((_, index) => !completed.includes(mission.id + ':' + index)).map((objective, index) => objective)].filter(Boolean);
+        if (missing.length) { setReportValidated(false); add({ text: 'REPORT VALIDATION FAILED · nedokončeno: ' + missing.join(' | '), tone: 'error' }); }
+        else { setReportValidated(true); add({ text: 'REPORT VALIDATION PASSED · checklist, důkazy a draft jsou připravené.', tone: 'good' }, { text: 'Poznámka: obsah reportu stále vyžaduje odborné posouzení reprodukce, dopadu a mitigace.' }); }
+      }
     } else if (lower === 'wireless summary') {
       add({ text: 'Capture: lab-handshake.cap · WPA2 · handshake frames present · synthetic AP only', tone: 'good' }, { text: 'Limitations: metadata does not reveal a password or prove exploitability.' });
       if (mission?.id === 'wifi-07') mark(2);
@@ -249,19 +327,28 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     } else if (lower === 'cat authentication.log' || lower === 'get-content logs/authentication.log') {
       add({ text: '21:04:12 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:04:18 AUTH_FAIL user=svc_backup src=10.20.0.44' }, { text: '21:05:02 AUTH_SUCCESS user=svc_backup src=10.20.0.44', tone: 'warn' });
       if (mission?.id === 'ir-03') mark(1);
+    } else if (lower === 'get-content notes.txt' || lower === 'cat notes.txt') {
+      add({ text: 'OPERATOR NOTES · TRAINING WORKSTATION', tone: 'good' }, { text: 'Incident window: 21:04–21:06 UTC' }, { text: 'Preserve source artifacts. Record timestamps, source paths and SHA-256 hashes before analysis.' });
+    } else if (lower === 'get-content logs/updater_tmp.log' || lower === 'cat logs/updater_tmp.log') {
+      add({ text: '21:03:58 process_start name=updater_tmp.exe pid=4088 user=svc_backup', tone: 'warn' }, { text: '21:04:02 outbound_connection dst=198.51.100.24:443 process=updater_tmp.exe' }, { text: '21:05:02 auth_success user=svc_backup src=10.20.0.44' });
+      if (mission?.id === 'ir-03') mark(2);
+    } else if (lower === 'get-content recon.ps1' || lower === 'cat recon.ps1') {
+      add({ text: 'Write-Host "Starting reconnaissance..."' }, { text: '$target = "staging.noname-logistics.test"' }, { text: 'Write-Host "Target: $target"' }, { text: '# Resolve-DnsName $target' });
     } else if (lower === 'get-process' || lower === 'ps') {
       add({ text: 'ProcessName       Id     CPU' }, { text: 'explorer          1840   00:01' }, { text: 'powershell        2912   00:02' }, { text: 'updater_tmp       4088   18:42', tone: 'warn' });
       if (mission?.id === 'ir-03') mark(2);
     } else if (lower.startsWith('evidence add ')) {
       const name = command.slice(13).trim() || 'unnamed-evidence';
-      setEvidence(old => old.includes(name) ? old : [...old, name]);
+      if (!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(name)) { add({ text: 'Neplatný název důkazu. Použij 1–64 znaků: písmena, čísla, tečku, pomlčku nebo podtržítko.', tone: 'error' }); return; }
+      setEvidence(old => old.includes(name) ? old : [...old, name]); setReportValidated(false);
       add({ text: 'Evidence uložen: ' + name, tone: 'good' });
       if (mission?.id === 'recon-01') mark(4);
       if (mission?.id === 'web-02' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'api-08' || mission?.id === 'wifi-07') mark(3);
       if (mission?.id === 'ir-03') mark(3);
-      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08') mark(3);
+      if (mission?.id === 'idor-04' || mission?.id === 'sqli-05' || mission?.id === 'cloud-06' || mission?.id === 'wifi-07' || mission?.id === 'api-08' || mission?.id === 'ssrf-09' || mission?.id === 'tls-10') mark(3);
     } else if (lower === 'submit') {
       if (!mission) add({ text: 'Nejdřív vyber aktivní misi.', tone: 'warn' });
+      else if (!evidence.length || !reportDrafted || !reportValidated) add({ text: 'Odevzdání zamítnuto: potřebuješ důkazy, draft a úspěšnou validaci. Použij evidence list, report draft a report validate.', tone: 'warn' });
       else if (completed.filter(id => id.startsWith(mission.id + ':')).length >= mission.objectives.length - 1) {
         if (submitted.includes(mission.id)) { add({ text: 'Tato mise už byla odevzdána.', tone: 'warn' }); return; }
         mark(mission.objectives.length - 1);
@@ -295,16 +382,16 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     setScriptOutput(output.length ? output : ['Skript proběhl, ale nevypsal žádný výstup.']);
   };
   const chooseMission = (id: string) => {
-    setMissionId(id); setCompleted([]); setEvidence([]); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
+    setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setReportValidated(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
   };
   const appDefs: { id: AppId; label: string; icon: typeof Terminal; hint: string }[] = [
-    { id: 'powershell', label: 'PowerShell', icon: Terminal, hint: 'Terminál a příkazová řádka' },
-    { id: 'editor', label: 'Script Lab', icon: Code2, hint: 'Editor skriptů PowerShell' },
-    { id: 'browser', label: 'Browser', icon: Globe2, hint: 'Webová aplikace v lokálním labu' },
-    { id: 'files', label: 'File Explorer', icon: Folder, hint: 'Soubory a důkazy' },
-    { id: 'knowledge', label: 'Knowledge Base', icon: BookOpen, hint: 'Technická dokumentace' },
-    { id: 'monitor', label: 'Network Monitor', icon: Activity, hint: 'Simulovaná síťová telemetrie' },
-    { id: 'toolkit', label: 'Kali Toolkit', icon: HardDrive, hint: 'Katalog bezpečnostních nástrojů' },
+    { id: 'powershell', label: 'Lab Terminal', icon: Terminal, hint: 'Izolovaný terminál s výukovým interpretem' },
+    { id: 'editor', label: 'Text Editor', icon: Code2, hint: 'Editor laboratorních skriptů' },
+    { id: 'browser', label: 'Web Browser', icon: Globe2, hint: 'Prohlížeč lokálních laboratorních webů' },
+    { id: 'files', label: 'Files', icon: Folder, hint: 'Soubory a důkazy' },
+    { id: 'knowledge', label: 'Documentation', icon: BookOpen, hint: 'Technická dokumentace' },
+    { id: 'monitor', label: 'System Monitor', icon: Activity, hint: 'Simulovaná systémová a síťová telemetrie' },
+    { id: 'toolkit', label: 'Kali Tools', icon: HardDrive, hint: 'Katalog bezpečnostních nástrojů' },
     { id: 'help', label: 'Beginner Guide', icon: BookOpen, hint: 'Průvodce krok za krokem' },
     { id: 'search', label: 'BH Search', icon: Search, hint: 'Vyhledávač bezpečnostních znalostí' },
     { id: 'bounty', label: 'BH Bounty Hub', icon: Bug, hint: 'Simulovaná platforma bug bounty' }
@@ -314,9 +401,9 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
     {!mission ? <div className="lab-mission-select">{missions.map((item, index) => <button key={item.id} className="lab-mission-card" onClick={() => chooseMission(item.id)}><span className="lab-mission-number">0{index + 1} / CONTRACT</span><h3>{item.title}</h3><p>{item.brief}</p><div><span>{item.target}</span><b>+{item.reward} XP <Play size={13}/></b></div></button>)}</div> :
     <div className="laptop-shell">
       <div className="laptop-bezel"><div className="laptop-camera"/><div className="laptop-screen">
-        <div className="desktop-topbar"><span><Monitor size={13}/> BH-LAB WORKSTATION</span><span><i/> VM CONNECTED · {mission.id.toUpperCase()}</span><button onClick={() => setMissionId(null)}><X size={13}/> {cs ? 'ZAVŘÍT MISI' : 'CLOSE MISSION'}</button></div>
+        <div className="desktop-topbar"><button className="linux-activities" onClick={() => setNotice('Activities: vyber aplikaci z plochy nebo spodního doku.')}><Grid3X3 size={12}/> Activities</button><span className="linux-host"><Monitor size={12}/> BOUNTYHUNTER-LAB</span><span className="linux-clock">Thu 05 Nov · 21:14</span><span className="linux-tray"><Wifi size={12}/><Volume2 size={12}/><BatteryFull size={13}/><i/> VM</span><button className="linux-session" onClick={() => setMissionId(null)}><Power size={12}/></button></div>
         <div className="desktop-area">
-          <div className="desktop-icons">{appDefs.map(app => <button key={app.id} onClick={() => openApp(app.id)} className={activeApp === app.id ? 'selected' : ''}><span><app.icon size={22}/></span><b>{app.label}</b></button>)}</div>
+          <div className="desktop-icons">{appDefs.map((app, index) => <button key={app.id} onDoubleClick={() => openApp(app.id)} onClick={() => setNotice(app.hint)} className={activeApp === app.id ? 'selected' : ''} title={`${app.label} — dvojklikem otevřít`}><span className={`linux-app-icon app-icon-${index}`}><app.icon size={21}/></span><b>{app.label}</b></button>)}</div>
           <div className="desktop-mission-widget"><small>ACTIVE CONTRACT</small><b>{mission.title}</b><span>{mission.target}</span><div className="mission-progress"><i style={{ width: progress + '%' }}/></div><small>{objectiveIndex}/{mission.objectives.length} OBJECTIVES · {progress}%</small></div>
           {activeApp === 'powershell' && <div className="desktop-window terminal-window"><div className="desktop-window-title"><span><Terminal size={14}/> Windows PowerShell</span><div><button onClick={() => setLines(initialLines)}>↻</button><button onClick={() => setActiveApp('powershell')}>—</button><button onClick={() => setActiveApp('monitor')}>×</button></div></div><div className="powershell-output">{lines.map((line, i) => <div key={i} className={line.tone ?? ''}>{line.text || '\u00a0'}</div>)}</div><form className="powershell-input" onSubmit={e => { e.preventDefault(); runCommand(input); setInput(''); }}><span>{prompt}</span><input autoComplete="off" spellCheck={false} value={input} onChange={e => setInput(e.target.value)} placeholder="help"/><button><Play size={12}/></button></form></div>}
           {activeApp === 'editor' && <div className="desktop-window editor-window"><div className="desktop-window-title"><span><Code2 size={14}/> Script Lab — recon.ps1</span><button onClick={runScript}><Play size={12}/> RUN SCRIPT</button></div><div className="editor-help">PowerShell mini-runner · podporované konstrukce: Write-Host, proměnné $target a Resolve-DnsName.</div><textarea spellCheck={false} value={script} onChange={e => setScript(e.target.value)}/><div className="script-output">{scriptOutput.map((line, i) => <div key={i}>{line}</div>)}</div></div>}
@@ -330,10 +417,10 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
           {activeApp === 'help' && <div className="desktop-window help-window"><div className="desktop-window-title"><span><BookOpen size={14}/> Beginner Guide</span><span>START HERE</span></div><div className="help-scroll"><h3>První den v hackerské laboratoři</h3><p>Nemusíš znát příkazy nazpaměť. Postupuj pomalu: přečti zadání, otevři nápovědu, spusť jeden příkaz a zkus vysvětlit jeho výsledek.</p><label><input type="checkbox" checked={showBeginnerTips} onChange={e => setShowBeginnerTips(e.target.checked)}/> Zobrazovat tipy pro začátečníky</label>{showBeginnerTips && <div className="help-steps"><article><b>01 · Zorientuj se</b><p>whoami zjistí, pod jakým účtem pracuješ. pwd ukáže aktuální složku. ls vypíše její obsah.</p><button onClick={() => { setInput('whoami'); setActiveApp('powershell'); }}>Zkusit whoami</button></article><article><b>02 · Poznej síť</b><p>ipconfig ukáže síťové rozhraní. nslookup překládá doménu na IP adresu. DNS je jako adresář internetu.</p><button onClick={() => { setInput('ipconfig'); setActiveApp('powershell'); }}>Zkusit ipconfig</button></article><article><b>03 · Prozkoumej služby</b><p>Nmap v tomto labu ukáže otevřené porty a názvy služeb. Port si představ jako konkrétní vstupní dveře do služby.</p><button onClick={() => { setInput('nmap -sV staging.noname-logistics.test'); setActiveApp('powershell'); }}>Zkusit Nmap</button></article><article><b>04 · Sbírej důkazy</b><p>Nález není hotový report. Zaznamenej, co jsi pozoroval, na jakém cíli a jaký to může mít dopad.</p><button onClick={() => { setInput('evidence add recon-observation'); setActiveApp('powershell'); }}>Přidat ukázkový důkaz</button></article></div>}<div className="help-callout"><b>Pravidlo bezpečné laboratoře</b><p>Všechny cíle končící .test a .lab jsou fiktivní. Nástroje nekomunikují s internetem ani s okolní sítí. Skutečné testování prováděj pouze s výslovným oprávněním.</p></div></div></div>}
           {activeApp === 'monitor' && <div className="desktop-window monitor-window"><div className="desktop-window-title"><span><Activity size={14}/> Network Monitor</span><span>CAPTURE: SIMULATED</span></div><div className="monitor-metric"><b>10.20.0.15</b><span>OPERATOR WORKSTATION</span></div><div className="monitor-metric"><b>10.20.0.24</b><span>{mission.target}</span></div><div className="monitor-packet"><span>21:04:12</span> DNS query → staging.noname-logistics.test</div><div className="monitor-packet"><span>21:04:13</span> TCP SYN → 10.20.0.24:443</div><div className="monitor-packet"><span>21:04:14</span> TLS handshake → nginx/1.24.0</div><div className="monitor-packet"><span>21:04:15</span> HTTP GET /api/docs → 200 OK</div></div>}
         </div>
-        <div className="desktop-taskbar"><button className="task-start" onClick={() => setNotice('Start menu: aplikace jsou dostupné na ploše.')}>⊞</button>{openApps.map(app => { const item = appDefs.find(x => x.id === app)!; return <button key={app} className={activeApp === app ? 'active' : ''} onClick={() => openApp(app)}><item.icon size={14}/>{item.label}</button>; })}<span className="task-clock">BH-LAB · 21:14 · SECURE SESSION</span></div>
+        <div className="desktop-taskbar"><button className="task-start" title="Show applications" onClick={() => setNotice('Applications: dvojklikem otevři ikonu na ploše.') }><Grid3X3 size={17}/></button>{openApps.map(app => { const item = appDefs.find(x => x.id === app)!; return <button key={app} title={item.label} className={activeApp === app ? 'active' : ''} onClick={() => openApp(app)}><item.icon size={17}/><span>{item.label}</span></button>; })}<span className="task-clock">{cs ? 'IZOLOVANÁ LABORATOŘ' : 'ISOLATED LAB'} · {mission.id.toUpperCase()}</span></div>
       </div></div>
       <div className="laptop-hinge"/><div className="laptop-base"><div className="laptop-trackpad"/></div>
-      <div className="lab-below"><div className="lab-objectives"><div><b>MISSION OBJECTIVES</b><span>{objectiveIndex}/{mission.objectives.length} COMPLETE</span></div>{mission.objectives.map((item, index) => <div key={item} className={completed.includes(mission.id + ':' + index) ? 'done' : ''}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div><div className="lab-coach"><div><BookOpen size={15}/> LEARN WHILE YOU PLAY</div><p>{mission.id === 'recon-01' ? 'Tip: Nejdřív si ověř vlastní síťové nastavení. Potom přelož DNS jméno a až následně zkoumej porty. Tento postup ti pomůže odlišit problém DNS od nedostupné služby.' : mission.id === 'web-02' ? 'Tip: HTTP hlavičky často prozradí server, typ obsahu nebo bezpečnostní konfiguraci. Samotná dostupnost dokumentace ještě automaticky neznamená kritickou zranitelnost — důležitý je její obsah a dopad.' : 'Tip: Při incident response zachovej původní důkazy. Zaznamenej čas, zdroj, integritu a kontext každého artefaktu.'}</p><small>CONCEPTS: DNS · TCP · PORTS · SERVICE FINGERPRINTING</small></div></div>
+      <div className="lab-below"><div className="lab-objectives"><div><b>MISSION OBJECTIVES</b><span>{objectiveIndex}/{mission.objectives.length} COMPLETE</span></div>{mission.objectives.map((item, index) => <div key={item} className={completed.includes(mission.id + ':' + index) ? 'done' : ''}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div><div className="lab-coach"><div><BookOpen size={15}/> LEARN WHILE YOU PLAY</div><p>{mission.id === 'recon-01' ? 'Tip: Nejdřív si ověř vlastní síťové nastavení. Potom přelož DNS jméno a až následně zkoumej porty. Tento postup ti pomůže odlišit problém DNS od nedostupné služby.' : mission.id === 'web-02' ? 'Tip: HTTP hlavičky často prozradí server, typ obsahu nebo bezpečnostní konfiguraci. Samotná dostupnost dokumentace ještě automaticky neznamená kritickou zranitelnost — důležitý je její obsah a dopad.' : mission.id === 'ssrf-09' ? 'Tip: SSRF není jen kontrola textu URL. Server musí bezpečně vyhodnotit DNS, zakázané IP rozsahy a každý redirect. Nejspolehlivější je kombinace allowlistu a síťového egress filtru.' : mission.id === 'tls-10' ? 'Tip: Zastaralý protokol je konfigurační slabina, ale její závažnost závisí na dostupnosti a kontextu služby. Certifikát, TLS verze a HSTS kontroluj odděleně a doporučení formuluj konkrétně.' : 'Tip: Při incident response zachovej původní důkazy. Zaznamenej čas, zdroj, integritu a kontext každého artefaktu.'}</p><small>CONCEPTS: DNS · TCP · PORTS · SERVICE FINGERPRINTING</small></div></div>
       {notice && <div className="lab-notice">{notice}<button onClick={() => setNotice('')}>×</button></div>}
     </div>}
     <div className="lab-disclaimer"><ShieldCheck size={13}/> {cs ? 'Všechny příkazy, cíle a síťové výstupy jsou simulované. Notebook neprovádí skutečné síťové operace.' : 'All commands, targets and network outputs are simulated. The laptop performs no real network operations.'}</div>
