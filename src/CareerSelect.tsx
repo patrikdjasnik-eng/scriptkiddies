@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Shield, Crosshair, Network, Eye, ArrowRight, Terminal, Lock, Radar, Bug } from 'lucide-react';
+import { useState, type CSSProperties } from 'react';
+import { Shield, Crosshair, Network, Eye, ArrowRight, Terminal, Lock, Bug } from 'lucide-react';
 
 export type CareerPath = 'red' | 'blue' | 'purple' | 'black';
 type Props = { onSelect: (path: CareerPath) => void; current?: CareerPath | null };
@@ -15,7 +15,7 @@ export default function CareerSelect({onSelect,current}:Props) {
   return <main className="career-screen">
     <div className="career-top"><div className="career-brand"><span><Bug size={19}/></span><div><b>SCRIPT KIDDIES</b><small>CAREER INITIALIZATION // BH-OS</small></div></div><div className="career-status"><i/> SIMULATION CORE ONLINE</div></div>
     <section className="career-hero"><div className="career-kicker"><span/> OPERATOR INTAKE / STEP 01</div><h1>Choose your <em>path.</em></h1><p>Každá cesta nabízí vlastní výcvik, mise, nástroje a způsob vyhodnocování. Specializaci můžeš později rozšířit — tvoje rozhodnutí určí první nasazení.</p></section>
-    <section className="career-grid">{paths.map(path=>{const Icon=path.icon;return <button key={path.id} className={'career-card '+(selected===path.id?'chosen':'')} style={{'--career':path.color} as React.CSSProperties} onClick={()=>setSelected(path.id)}><div className="career-card-head"><span className="career-icon"><Icon size={23}/></span><span className="career-radio">{selected===path.id?'SELECTED':'SELECT'}</span></div><small>{path.title}</small><h2>{path.name}</h2><p>{path.motto}</p><div className="career-focus">{path.focus}</div></button>})}</section>
+    <section className="career-grid">{paths.map(path=>{const Icon=path.icon;return <button key={path.id} className={'career-card '+(selected===path.id?'chosen':'')} style={{'--career':path.color} as CSSProperties} onClick={()=>setSelected(path.id)}><div className="career-card-head"><span className="career-icon"><Icon size={23}/></span><span className="career-radio">{selected===path.id?'SELECTED':'SELECT'}</span></div><small>{path.title}</small><h2>{path.name}</h2><p>{path.motto}</p><div className="career-focus">{path.focus}</div></button>})}</section>
     <section className="career-detail" style={{'--career':active.color} as React.CSSProperties}><div><div className="career-kicker"><span/> SELECTED TRAINING TRACK</div><h3>{active.name} <small>// {active.title}</small></h3><p>{active.intro}</p><div className="career-tools"><Terminal size={14}/> {active.tools}</div></div><button className="career-start" onClick={()=>onSelect(selected)}>INITIALIZE WORKSTATION <ArrowRight size={17}/></button></section>
     <div className="career-foot"><span><Lock size={12}/> FICTIONAL TARGETS · ISOLATED LAB · NO EXTERNAL REQUESTS</span><span>PROFILE CAN BE CHANGED LATER</span></div>
   </main>;
