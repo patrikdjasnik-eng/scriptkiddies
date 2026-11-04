@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X } from 'lucide-react';
 
 type AppId = 'powershell' | 'editor' | 'browser' | 'files' | 'knowledge' | 'monitor' | 'toolkit' | 'help' | 'search' | 'bounty';
@@ -92,8 +92,12 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [script, setScript] = useState('Write-Host "Starting reconnaissance..."\n$target = "staging.noname-logistics.test"\nWrite-Host "Target: $target"\n# Try: Resolve-DnsName $target');
   const [scriptOutput, setScriptOutput] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
-  const [earnedXp, setEarnedXp] = useState(0);
-  const [submitted, setSubmitted] = useState<string[]>([]);
+  const [earnedXp, setEarnedXp] = useState(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Number.isFinite(saved.earnedXp) && saved.earnedXp >= 0 ? saved.earnedXp : 0; } catch { return 0; }
+  });
+  const [submitted, setSubmitted] = useState<string[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Array.isArray(saved.submitted) ? saved.submitted.filter((id: unknown): id is string => typeof id === 'string' && missions.some(mission => mission.id === id)) : []; } catch { return []; }
+  });
   const [showBeginnerTips, setShowBeginnerTips] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedArticle, setSelectedArticle] = useState<(typeof internetArticles)[number] | null>(null);
@@ -102,7 +106,12 @@ export default function LaptopLab({ lang }: { lang: 'cs' | 'en' }) {
   const [registeredProfile, setRegisteredProfile] = useState<{name:string; email:string; handle:string} | null>(() => {
     try { const saved = localStorage.getItem('bh-lab-bounty-profile'); return saved ? JSON.parse(saved) : null; } catch { return null; }
   });
-  const [joinedPrograms, setJoinedPrograms] = useState<string[]>([]);
+  const [joinedPrograms, setJoinedPrograms] = useState<string[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem('bh-lab-progress') ?? '{}'); return Array.isArray(saved.joinedPrograms) ? saved.joinedPrograms.filter((name: unknown): name is string => typeof name === 'string' && bountyPrograms.some(program => program.name === name)) : []; } catch { return []; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('bh-lab-progress', JSON.stringify({ earnedXp, submitted, joinedPrograms })); } catch { /* Storage may be disabled; the game remains playable for this session. */ }
+  }, [earnedXp, submitted, joinedPrograms]);
   const mission = missions.find(item => item.id === missionId) ?? null;
   const objectiveIndex = mission ? completed.filter(id => id.startsWith(mission.id + ':')).length : 0;
   const progress = mission ? Math.min(100, Math.round(objectiveIndex / mission.objectives.length * 100)) : 0;
