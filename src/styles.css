@@ -418,3 +418,18 @@
 @media(max-width:560px){.career-screen{padding:18px 14px}.career-status{font-size:7px}.career-hero h1{font-size:40px}.career-grid{grid-template-columns:1fr}.career-card{min-height:180px}.career-foot{flex-direction:column}.game-global-bar{padding:0 8px;font-size:8px}.game-global-bar button{font-size:8px;padding:5px}.vscode-layout{grid-template-columns:115px 1fr}.vscode-window{height:420px}.docker-toolbar{align-items:stretch;flex-direction:column}.docker-container{flex-wrap:wrap}.docker-container>div{min-width:100%}}
 
 .vscode-output{max-height:70px;overflow:auto;background:#070c10;color:#a8c3ae;padding:6px 12px;font:9px/1.5 'DM Mono',monospace;border-top:1px solid #253139}.career-path-context{max-width:1200px;margin:0 auto 12px;color:#c6f36a;font:9px 'DM Mono',monospace;letter-spacing:.1em;padding:9px 12px;background:#142019;border-left:2px solid #c6f36a}
+
+
+.notes-blueprints{border-top:1px solid #263238;padding:13px 14px 18px;background:#0d1519}
+.notes-blueprints>header{height:auto;position:static;backdrop-filter:none;background:transparent;border:0;padding:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.notes-blueprints>header>div{display:grid;gap:4px}
+.notes-blueprints>header b{font:10px 'DM Mono',monospace;letter-spacing:.12em;color:#c6f36a}
+.notes-blueprints>header small,.notes-blueprints>header>span{font:8px 'DM Mono',monospace;color:#81948a}
+.notes-blueprints>article{display:flex;align-items:center;gap:9px;padding:11px 0;border-top:1px solid #202c32}
+.notes-blueprints>article>div{flex:1;min-width:0}
+.notes-blueprints>article b{font-size:11px;color:#dce7df}
+.notes-blueprints>article p{font-size:9px;line-height:1.5;color:#8fa197;margin:4px 0}
+.notes-blueprints>article code{font:8px 'DM Mono',monospace;color:#9fb78f;overflow-wrap:anywhere}
+.notes-blueprints>article button{display:flex;align-items:center;gap:5px;border:1px solid #405a45;background:#14231b;color:#c6f36a;padding:8px;font:8px 'DM Mono',monospace;white-space:nowrap}
+.notes-blueprints>article button:hover{background:#203b2b}
+@media(max-width:600px){.notes-window{height:78%;top:18%;overflow:auto}.notes-window textarea{height:190px;min-height:150px}.notes-blueprints>article{align-items:stretch;flex-wrap:wrap}.notes-blueprints>article>div{flex-basis:100%}.notes-blueprints>article button{flex:1;justify-content:center}}
