@@ -583,3 +583,49 @@ main.setup-screen{margin:0!important;position:relative;inset:auto}
 .game-global-bar button{cursor:pointer}
 @media(max-width:760px){.welcome-screen{padding:0;min-height:calc(100vh - 42px)}.welcome-panel{padding:0 16px 20px;border-left:0;border-right:0}.welcome-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.welcome-card{min-height:155px}.welcome-footer{align-items:flex-start;flex-direction:column}.welcome-footer button{width:100%;justify-content:center}}
 @media(max-width:440px){.welcome-grid{grid-template-columns:1fr}.welcome-card{min-height:0}.welcome-intro{padding-top:23px}.game-global-bar{gap:8px}.game-global-bar>div{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.game-global-bar button{font-size:7px;padding:5px 7px}}
+
+
+/* RabbitOS virtual system control center */
+.rabbitos-window{left:5%;top:5%;width:90%;height:88%;max-width:1180px;display:flex;flex-direction:column;background:#0e171c;color:#dce7df;overflow:hidden}
+.rabbitos-version{margin-left:9px;padding:3px 6px;background:#c6f36a18;color:#c6f36a;font:6px var(--mono);letter-spacing:.6px}
+.rabbitos-shell{display:grid;grid-template-columns:170px minmax(0,1fr);min-height:0;flex:1}
+.rabbitos-sidebar{padding:12px 8px;background:#0a1216;border-right:1px solid #293b38;display:flex;flex-direction:column;gap:4px}
+.rabbitos-sidebar button{display:flex;align-items:center;gap:9px;padding:10px 9px;border:1px solid transparent;background:transparent;color:#87998e;text-align:left;font:8px var(--mono)}
+.rabbitos-sidebar button.active{background:#c6f36a12;border-color:#526344;color:#d9f3b0}.rabbitos-sidebar button svg{color:#c6f36a}
+.rabbitos-content{padding:20px;overflow:auto;min-width:0}.rabbitos-content section{max-width:100%}
+.rabbitos-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:17px}
+.rabbitos-heading small{color:#c6f36a;font:7px var(--mono);letter-spacing:1.2px}.rabbitos-heading h3{margin:6px 0;font-size:18px;color:#e2ece4}.rabbitos-heading p{margin:0;color:#87998e;font-size:9px;line-height:1.6}
+.rabbitos-primary,.rabbitos-secondary{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border:1px solid #c6f36a;background:#c6f36a;color:#15200f;font:7px var(--mono);font-weight:bold;white-space:nowrap}
+.rabbitos-secondary{background:transparent;color:#c6f36a}
+.rabbitos-message{display:flex;justify-content:space-between;gap:10px;padding:9px 11px;margin-bottom:14px;border:1px solid #506b4c;background:#c6f36a12;color:#cde4b2;font:8px var(--mono)}
+.rabbitos-message button{background:transparent;border:0;color:inherit}
+.rabbitos-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.rabbitos-metrics article{display:grid;gap:6px;padding:13px;border:1px solid #2d403c;background:#121e22;min-width:0}
+.rabbitos-metrics svg{width:17px;color:#c6f36a}.rabbitos-metrics small{color:#72877b;font:7px var(--mono)}.rabbitos-metrics b{overflow-wrap:anywhere;color:#e1e9e1;font-size:10px}.rabbitos-metrics span{color:#84978b;font-size:8px}
+.rabbitos-status{display:flex;flex-wrap:wrap;gap:14px;margin:13px 0 20px;padding:11px;background:#111d20;border:1px solid #293d37;color:#83978a;font:7px var(--mono)}
+.rabbitos-status span:first-child{color:#c6f36a}.rabbitos-status i{display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:#9cda6a}.rabbitos-status i.bad{background:#f07878}
+.rabbitos-content h4{margin:15px 0 9px;color:#b8c9bd;font:8px var(--mono);letter-spacing:.7px}
+.rabbitos-diagnostics{display:grid;gap:6px}.rabbitos-diagnostics>div{display:grid;grid-template-columns:18px 150px minmax(0,1fr);gap:8px;align-items:center;padding:9px 10px;background:#111c20;border:1px solid #293b36}
+.rabbitos-diagnostics>div>span{color:#9bdc73}.rabbitos-diagnostics>div.warning>span{color:#e6bf69}.rabbitos-diagnostics>div.error>span{color:#f07878}.rabbitos-diagnostics b{font:7px var(--mono);color:#a8b8ac}.rabbitos-diagnostics p{margin:0;color:#8d9e93;font-size:8px}
+.rabbitos-form-grid,.rabbitos-hardware-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.rabbitos-form-grid label,.rabbitos-hardware-list label{display:grid;gap:6px;color:#94a69a;font:7px var(--mono);letter-spacing:.4px}
+.rabbitos-form-grid input,.rabbitos-form-grid select,.rabbitos-form-grid textarea,.rabbitos-hardware-list select{width:100%;padding:9px;background:#101c20;border:1px solid #3a5047;color:#dce8df;font:8px var(--mono);min-width:0}
+.rabbitos-form-grid textarea{min-height:74px;resize:vertical}
+.rabbitos-toggle-row{display:flex!important;align-items:center;justify-content:space-between;gap:12px;padding:10px;background:#111d20;border:1px solid #2e413a;color:#d3dfd5!important}
+.rabbitos-toggle-row button{min-width:88px;padding:6px 8px;border:1px solid #5a5f50;background:#202725;color:#aab7ac;font:7px var(--mono)}
+.rabbitos-toggle-row button.enabled{border-color:#a6d36c;color:#c6f36a;background:#c6f36a12}
+.rabbitos-callout{display:flex;align-items:center;gap:9px;margin:14px 0;padding:11px;border:1px solid #3b5147;background:#c6f36a0b;color:#9db0a2;font-size:8px;line-height:1.6}.rabbitos-callout svg{flex-shrink:0;color:#c6f36a}
+.rabbitos-diskbar{display:flex;justify-content:space-between;padding:11px 13px;margin-bottom:12px;background:#111e22;border:1px solid #2d4139;color:#a5b7a9;font:8px var(--mono)}
+.rabbitos-file-list,.rabbitos-account-list,.rabbitos-service-list,.rabbitos-log-list{display:grid;gap:6px;margin-top:14px}
+.rabbitos-file-list>article,.rabbitos-account-list>article,.rabbitos-service-list>article{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid #2b3e39;background:#111b20;min-width:0}
+.rabbitos-file-list>article>span,.rabbitos-account-list>article>div,.rabbitos-service-list>article>div{display:grid;gap:5px;flex:1;min-width:0}.rabbitos-file-list b,.rabbitos-account-list b,.rabbitos-service-list b{color:#d5e1d7;font-size:8px;overflow-wrap:anywhere}.rabbitos-file-list small,.rabbitos-account-list small,.rabbitos-service-list small{color:#788c80;font:7px var(--mono);overflow-wrap:anywhere}
+.rabbitos-file-list button,.rabbitos-account-list button,.rabbitos-service-list button,.rabbitos-recovered button{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid #495b51;background:#172326;color:#b9c8bd;font:7px var(--mono);white-space:nowrap}
+.rabbitos-recovered{display:flex;justify-content:space-between;align-items:center;padding:9px;background:#2a2418;border:1px solid #695332;color:#e4c77f;font:8px var(--mono)}
+.rabbitos-muted{color:#7d9185;font-size:8px}
+.rabbitos-account-list .enabled-text,.rabbitos-service-list .enabled-text{color:#a9df79;font:7px var(--mono)}.rabbitos-account-list .disabled-text,.rabbitos-service-list .disabled-text{color:#df9b78;font:7px var(--mono)}
+.rabbitos-service-list>article>div p{margin:0;color:#8d9e93;font-size:8px;line-height:1.5}
+.rabbitos-log-list article{display:grid;grid-template-columns:145px 48px 85px minmax(0,1fr);gap:8px;align-items:start;padding:9px;background:#101a1e;border:1px solid #293b36}
+.rabbitos-log-list time,.rabbitos-log-list span{color:#75897d;font:7px var(--mono)}.rabbitos-log-list b{font:7px var(--mono)}.rabbitos-log-list b.info{color:#a8d981}.rabbitos-log-list b.warn{color:#e6bf69}.rabbitos-log-list b.error{color:#ef8585}.rabbitos-log-list p{margin:0;color:#b4c3b7;font-size:8px;overflow-wrap:anywhere}
+.rabbitos-foot{display:flex;justify-content:space-between;padding:8px 12px;border-top:1px solid #293b36;background:#0a1216;color:#61766b;font:6px var(--mono);letter-spacing:.5px}
+@media(max-width:760px){.rabbitos-window{left:1%;top:2%;width:98%;height:94%}.rabbitos-shell{grid-template-columns:112px minmax(0,1fr)}.rabbitos-sidebar{padding:7px 4px}.rabbitos-sidebar button{font-size:6px;padding:9px 5px;gap:5px}.rabbitos-content{padding:12px}.rabbitos-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.rabbitos-diagnostics>div{grid-template-columns:17px 1fr}.rabbitos-diagnostics p{grid-column:2}.rabbitos-log-list article{grid-template-columns:1fr 42px;gap:5px}.rabbitos-log-list span{display:none}.rabbitos-log-list p{grid-column:1/-1}.rabbitos-heading{flex-direction:column}.rabbitos-primary{white-space:normal}}
+@media(max-width:440px){.rabbitos-shell{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.rabbitos-sidebar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-right:0;border-bottom:1px solid #293b38}.rabbitos-sidebar button{justify-content:center;flex-direction:column;font-size:5px;gap:3px;padding:6px 2px}.rabbitos-form-grid,.rabbitos-hardware-list{grid-template-columns:1fr}.rabbitos-file-list>article,.rabbitos-account-list>article,.rabbitos-service-list>article{gap:6px;flex-wrap:wrap}.rabbitos-foot{font-size:5px}}
