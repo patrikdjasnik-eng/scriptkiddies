@@ -401,20 +401,23 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   };
   const runScript = (source = script) => {
     const output: string[] = [];
-    const target = mission?.target ?? 'staging.noname-logistics.test';
-    source.split(/\r?\n/).forEach(raw => {
-      const line = raw.trim();
-      if (!line || line.startsWith('#')) return;
-      const hostMatch = line.match(/^(?:\$target|\$host)\s*=\s*["']([^"']+)["']$/i);
-      const printMatch = line.match(/^Write-Host\s+["'](.*)["']$/i);
-      const printVar = line.match(/^Write-Host\s+\$(target|host)$/i);
-      if (hostMatch) output.push('[proměnná nastavena] ' + hostMatch[1]);
-      else if (printMatch) output.push(printMatch[1]);
-      else if (printVar) output.push(target);
-      else if (/^Resolve-DnsName\s+\$target$/i.test(line)) output.push('Name: ' + target + ' · IPAddress: 10.20.0.24 (simulováno)');
-      else output.push('Řádek přeskočen — příkaz není v podporované sadě: ' + line);
+    const variables: Record<string,string> = { target: mission?.target ?? 'staging.noname-logistics.test', host: mission?.target ?? 'staging.noname-logistics.test' };
+    const interpolate = (value:string) => value.replace(/\$([a-zA-Z_][\w]*)/g, (_match,key:string) => variables[key.toLowerCase()] ?? '');
+    source.split(/\r?\n/).forEach((raw,index) => {
+      const line=raw.trim();
+      if(!line || line.startsWith('#')) return;
+      const assignment=line.match(/^\$([a-zA-Z_][\w]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+))$/);
+      if(assignment){const key=assignment[1].toLowerCase();variables[key]=interpolate(assignment[2]??assignment[3]??assignment[4]??'');output.push('['+key+' nastavena] '+variables[key]);return;}
+      const echo=line.match(/^(?:Write-Host|Write-Output)\s+(.+)$/i);
+      if(echo){let value=echo[1].trim();const quoted=value.match(/^["'](.*)["']$/);if(quoted)value=quoted[1];output.push(interpolate(value));return;}
+      const dns=line.match(/^(?:Resolve-DnsName|nslookup)\s+(.+)$/i);
+      if(dns){const host=interpolate(dns[1].replace(/^["']|["']$/g,''));if(!host.endsWith('.test')&&!host.endsWith('.lab'))output.push('Řádek '+(index+1)+': DNS cíl mimo fiktivní namespace — zablokováno.');else output.push('Name: '+host+' · IPAddress: 10.20.0.24 (simulováno)');return;}
+      const get=line.match(/^(?:Get-Content|cat)\s+(.+)$/i);
+      if(get){const path=get[1].replace(/\\/g,'/').replace(/^\.\//,'');if(!path.startsWith('workspace/')){output.push('Řádek '+(index+1)+': čtení povoleno pouze z workspace/.');return;}const content=workspaceFiles[path];output.push(content===undefined?'Soubor nenalezen: '+path:content);return;}
+      if(/^(?:Get-Location|pwd)$/i.test(line)){output.push('C:\\Users\\operator\\workspace');return;}
+      output.push('Řádek '+(index+1)+': příkaz není v podporované sadě: '+line);
     });
-    setScriptOutput(output.length ? output : ['Skript proběhl, ale nevypsal žádný výstup.']);
+    setScriptOutput(output.length ? output : ['Skript nevypsal žádný výstup.']);
   };
   const chooseMission = (id: string) => {
     setMissionId(id); setCompleted([]); setEvidence([]); setReportDrafted(false); setReportValidated(false); setLines(initialLines); setActiveApp('powershell'); setOpenApps(['powershell']); setNotice('');
