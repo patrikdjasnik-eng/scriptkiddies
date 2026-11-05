@@ -662,3 +662,37 @@ main.setup-screen{margin:0!important;position:relative;inset:auto}
 .rabbitos-advanced-grid .rabbitos-file-list>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid rgba(120,150,180,.15)}
 .rabbitos-advanced-grid .rabbitos-file-list small{display:block}
 @media(max-width:760px){.rabbitos-advanced-grid{grid-template-columns:1fr}.rabbitos-advanced{padding:10px}}
+
+
+/* RabbitOS desktop refresh — XFCE-inspired, blue desktop shell */
+.laptop-screen{background:#dbe7f3;border-color:#263b54}
+.desktop-topbar{height:34px;background:rgba(20,31,46,.94);color:#dce8f6;font:11px 'DM Mono',monospace;padding:0 14px;gap:16px}
+.desktop-topbar button{font:10px 'DM Mono',monospace;border-radius:5px;padding:6px 10px;background:#263b55;color:#e7f1ff;border:1px solid #ffffff20}
+.desktop-topbar .linux-host,.desktop-topbar .linux-clock{color:#d8e8ff}
+.desktop-area{inset:34px 0 43px;background:radial-gradient(ellipse at 72% 12%,#dceaf5a8,transparent 42%),linear-gradient(145deg,#234d78 0%,#477fae 48%,#b8cddd 100%)}
+.desktop-area:before{opacity:.12;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:34px 34px}
+.desktop-icons{top:14px;left:14px;grid-template-columns:70px;gap:10px}
+.desktop-icons button{width:66px;min-height:66px;color:#fff;text-shadow:0 1px 4px #12263e;font-family:Arial,sans-serif}
+.desktop-icons button>span{width:36px;height:32px;display:grid;place-items:center;border-radius:7px;background:linear-gradient(145deg,#f5fbff,#8cb9df);color:#28608d;filter:drop-shadow(0 3px 4px #19365255)}
+.desktop-icons button b{font:10px Arial,sans-serif;color:#fff}
+.desktop-icons button:hover,.desktop-icons button.selected{background:#e7f3ff35;border:1px solid #ffffff75}
+.desktop-mission-widget{right:15px;top:14px;width:230px;background:#172434dc;border:1px solid #a9c9e66b;border-radius:9px;padding:13px;box-shadow:0 12px 30px #19304b44}
+.desktop-mission-widget small{font-size:9px;color:#b5c9dd}.desktop-mission-widget>b{font-size:12px;color:#f5f9ff}.desktop-mission-widget>span{font-size:9px;color:#91c8ff}
+.desktop-window{left:21%;top:10%;width:67%;height:82%;min-height:270px;background:#202a37f5;border:1px solid #9db9d6;border-radius:9px;box-shadow:0 18px 50px #14283f70}
+.desktop-window-title{height:38px;flex-basis:38px;padding:0 12px;background:#29394c;color:#e7f1fb;font:10px 'DM Mono',monospace}
+.desktop-window-title button{border-radius:5px;font-size:9px;background:#304e6d;color:#dcecff;border-color:#709ac2}.desktop-window-title svg{color:#86b9e8}
+.desktop-taskbar{height:43px;background:rgba(22,33,48,.96);border-top:1px solid #d2e2f4aa;padding:0 10px;gap:7px}
+.desktop-taskbar button{height:33px;border-radius:6px;padding:0 10px;color:#d8e5f2;font:10px Arial,sans-serif}
+.desktop-taskbar button.active{background:#4b78a4;border-color:#8bb9e7;color:#fff}
+.desktop-taskbar .task-start{width:34px;justify-content:center;background:#397db7;color:white;border:1px solid #8bbbe6}.task-clock{font:9px 'DM Mono',monospace;color:#d1e0ef}
+.rabbit-menu-backdrop{position:absolute;inset:0;z-index:8;border:0;background:transparent}
+.rabbit-start-menu{position:absolute;z-index:9;left:12px;bottom:10px;width:min(410px,calc(100% - 24px));height:min(430px,calc(100% - 22px));display:flex;flex-direction:column;background:rgba(20,29,41,.97);border:1px solid #83a9d1;border-radius:9px;box-shadow:0 20px 55px #10243d99;color:#e8f1fb;overflow:hidden;backdrop-filter:blur(18px)}
+.rabbit-start-menu header{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid #ffffff1a}
+.rabbit-user-avatar{width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(145deg,#8fc3ee,#3475ae);font-weight:800;color:#102a44}
+.rabbit-start-menu header b,.rabbit-start-menu header small{display:block}.rabbit-start-menu header b{font:bold 13px Arial,sans-serif}.rabbit-start-menu header small{font:10px Arial,sans-serif;color:#9fb3c9;margin-top:3px}.rabbit-start-menu header>span{margin-left:auto;font:9px 'DM Mono',monospace;color:#9ee6b2}
+.rabbit-menu-body{display:grid;grid-template-columns:1fr 1fr;min-height:0;flex:1}.rabbit-menu-body nav,.rabbit-menu-shortcuts{padding:12px;overflow:auto}.rabbit-menu-body nav{border-right:1px solid #ffffff18}
+.rabbit-menu-body nav>b,.rabbit-menu-shortcuts>b{display:block;margin:0 0 8px 5px;color:#91a9c2;font:9px 'DM Mono',monospace;letter-spacing:.1em}
+.rabbit-menu-body nav button,.rabbit-menu-shortcuts button{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:8px 7px;border:0;border-radius:5px;background:transparent;color:#dce8f5;font:11px Arial,sans-serif}
+.rabbit-menu-body nav button:hover,.rabbit-menu-shortcuts button:hover{background:#4b80b5;color:white}.rabbit-menu-body nav button span{color:#83b7e8}.rabbit-menu-shortcuts button svg{color:#91bce3}
+.rabbit-start-menu footer{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff1a}.rabbit-start-menu footer button{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #ffffff25;border-radius:5px;background:#2a3e55;color:#e4effb}.rabbit-start-menu footer button:first-child{flex:1}
+@media(max-width:700px){.desktop-window{left:3%;width:94%;top:8%;height:84%}.desktop-mission-widget{width:155px}.rabbit-start-menu{width:min(360px,calc(100% - 16px));left:8px}.rabbit-menu-body nav,.rabbit-menu-shortcuts{padding:7px}.rabbit-menu-body nav button,.rabbit-menu-shortcuts button{font-size:10px;padding:7px 4px}}
