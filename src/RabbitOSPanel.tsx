@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Activity, Cpu, Database, HardDrive, Lock, Power, RefreshCw, Server, ShieldCheck, Users, Wrench, FilePlus2, Trash2, RotateCcw, Play, Square, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Activity, Cpu, Database, HardDrive, Power, RefreshCw, Server, ShieldCheck, Users, Wrench, FilePlus2, Trash2, RotateCcw, Play, Square, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { diagnoseHardware, canBootRabbitOS, parseHardwareState, serializeHardwareState } from './system/hardware';
 import {
   addVirtualAccount, addVirtualFile, bootRabbitOS, deleteVirtualFile, parseRabbitOSState,
