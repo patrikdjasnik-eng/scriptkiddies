@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import RabbitOSAdvancedPanel from './RabbitOSAdvancedPanel';
 import { Activity, Cpu, Database, HardDrive, Power, RefreshCw, Server, ShieldCheck, Users, Wrench, FilePlus2, Trash2, RotateCcw, Play, Square, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { diagnoseHardware, canBootRabbitOS, parseHardwareState, serializeHardwareState } from './system/hardware';
 import {
@@ -7,7 +8,7 @@ import {
   type RabbitOSState, type VirtualAccount
 } from './system/rabbitos';
 
-type Tab = 'overview' | 'bios' | 'hardware' | 'storage' | 'accounts' | 'services' | 'logs';
+type Tab = 'overview' | 'bios' | 'hardware' | 'storage' | 'advanced' | 'accounts' | 'services' | 'logs';
 type Props = { username?: string };
 const KEY = 'bh-rabbitos-state';
 const INSTALL_KEY = 'bh-os-installation';
@@ -107,7 +108,7 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
   };
   const tabs: {id:Tab;label:string;icon:typeof Activity}[] = [
     {id:'overview',label:'Přehled',icon:Activity},{id:'bios',label:'BIOS / UEFI',icon:Power},
-    {id:'hardware',label:'Hardware',icon:Cpu},{id:'storage',label:'Filesystem',icon:Database},
+    {id:'hardware',label:'Hardware',icon:Cpu},{id:'storage',label:'Filesystem',icon:Database},{id:'advanced',label:'Advanced',icon:Server},
     {id:'accounts',label:'Accounts',icon:Users},{id:'services',label:'Services',icon:Server},{id:'logs',label:'System Logs',icon:FilePlus2}
   ];
 
@@ -168,6 +169,7 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
           {selectedFile&&(()=>{const file=state.files.find(item=>item.path===selectedFile&&!item.deleted);if(!file)return null;const current=state.accounts.find(item=>item.username===sessionUser);const allowed=current?canAccessVirtualFile(file,current,'read'):false;return <div className="rabbitos-file-preview"><b>{file.path}</b>{allowed?<pre>{file.content??'[Soubor neobsahuje textový obsah.]'}</pre>:<p>ACCESS DENIED — účet nemá oprávnění ke čtení tohoto souboru.</p>}</div>;})()}
           <h4>Recovery area</h4>{recoveredFiles.length?recoveredFiles.map(file=><article className="rabbitos-recovered" key={file.path}><span>{file.path}</span><button disabled={!isAdmin} onClick={()=>{if(!isAdmin){setMessage('Obnova souborů vyžaduje administrátora.');return;}commit(restoreVirtualFile(state,file.path));setMessage('Soubor obnoven.');}}><RotateCcw size={13}/> RESTORE</button></article>):<p className="rabbitos-muted">Žádné odstraněné soubory.</p>}
         </section>}
+        {canUseOS && tab==='advanced'&&<RabbitOSAdvancedPanel/>}
         {canUseOS && tab==='accounts'&&<section><div className="rabbitos-heading"><div><small>LOCAL IDENTITY & ACCESS</small><h3>Users & groups</h3><p>Spravuj lokální účty a jejich herní role. Jde o simulaci oprávnění, ne o skutečné účty OS.</p></div></div>
           <div className="rabbitos-form-grid"><label>Username<input value={accountName} onChange={e=>setAccountName(e.target.value)} placeholder="analyst01"/></label><label>Role<select value={accountRole} onChange={e=>setAccountRole(e.target.value as VirtualAccount['role'])}><option value="operator">Operator</option><option value="analyst">Analyst</option><option value="administrator">Administrator</option></select></label><label>Initial password<input type="password" value={newAccountPassword} onChange={e=>setNewAccountPassword(e.target.value)} minLength={8} maxLength={64} autoComplete="new-password"/></label></div><button className="rabbitos-primary" disabled={!isAdmin||accountBusy||newAccountPassword.length<8} onClick={async()=>{if(!isAdmin){setMessage('Vytváření účtů vyžaduje administrátora.');return;}setAccountBusy(true);try{const passwordHash=await hashPassword(newAccountPassword);const next=addVirtualAccount(state,accountName,accountRole,passwordHash);commit(next);setAccountName('');setNewAccountPassword('');setMessage('Požadavek na vytvoření účtu zpracován.');}catch{setMessage('Heslo se nepodařilo bezpečně zpracovat.');}finally{setAccountBusy(false);}}}><Users size={14}/> CREATE LOCAL ACCOUNT</button>
           <div className="rabbitos-account-list">{state.accounts.map(user=><article key={user.id}><div><b>{user.username}</b><small>{user.role.toUpperCase()} · GROUPS: {user.groups.join(', ')}</small></div><span className={user.enabled?'enabled-text':'disabled-text'}>{user.enabled?'ENABLED':'DISABLED'}</span><button disabled={!isAdmin||user.username===sessionUser} onClick={()=>{if(!isAdmin){setMessage('Změna účtů vyžaduje administrátora.');return;}commit(toggleVirtualAccount(state,user.id));setMessage('Stav účtu byl zpracován.');}}>{user.enabled?'DISABLE':'ENABLE'}</button></article>)}</div>
