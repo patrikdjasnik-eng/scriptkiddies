@@ -433,3 +433,30 @@
 .notes-blueprints>article button{display:flex;align-items:center;gap:5px;border:1px solid #405a45;background:#14231b;color:#c6f36a;padding:8px;font:8px 'DM Mono',monospace;white-space:nowrap}
 .notes-blueprints>article button:hover{background:#203b2b}
 @media(max-width:600px){.notes-window{height:78%;top:18%;overflow:auto}.notes-window textarea{height:190px;min-height:150px}.notes-blueprints>article{align-items:stretch;flex-wrap:wrap}.notes-blueprints>article>div{flex-basis:100%}.notes-blueprints>article button{flex:1;justify-content:center}}
+
+
+/* Fictional employer selection in career onboarding */
+.employer-picker{--career:#c6f36a;max-width:1280px;margin:18px auto 0;padding:20px;background:#0e171b;border:1px solid color-mix(in srgb,var(--career) 28%,transparent);border-radius:8px}
+.employer-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px}
+.employer-heading h2{display:flex;align-items:center;gap:9px;margin:9px 0 5px;font-size:19px;color:#e8eee9}
+.employer-heading h2 svg{color:var(--career)}
+.employer-heading p{margin:0;color:#96a69c;font-size:11px;line-height:1.6}
+.employer-count{white-space:nowrap;border:1px solid color-mix(in srgb,var(--career) 40%,transparent);padding:8px 10px;color:var(--career);font:8px 'DM Mono',monospace}
+.employer-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.employer-card{min-width:0;text-align:left;padding:13px;background:linear-gradient(145deg,#141e22,#0b1216);border:1px solid #2a383e;border-radius:6px;color:#e8eee9;transition:.16s}
+.employer-card:hover,.employer-card.chosen{border-color:var(--career);background:color-mix(in srgb,var(--career) 7%,#0c1418);transform:translateY(-2px)}
+.employer-card-top{display:flex;justify-content:space-between;gap:5px;color:#85968c;font:7px 'DM Mono',monospace}
+.employer-card-top span:last-child{color:var(--career)}
+.employer-card h3{font-size:13px;line-height:1.35;margin:13px 0 5px;overflow-wrap:anywhere}
+.employer-role{display:block;min-height:30px;color:#c3d0c7;font-size:9px;line-height:1.5}
+.employer-card p{min-height:42px;color:#83948a;font-size:8px;line-height:1.55;margin:8px 0}
+.employer-salary{display:flex;align-items:center;gap:7px;border-top:1px solid #2a383e;padding-top:10px;color:var(--career)}
+.employer-salary strong{font:10px 'DM Mono',monospace}
+.employer-note{max-width:1280px;margin:10px auto 0;color:#788a80;font:8px/1.6 'DM Mono',monospace}
+.black-note{padding:12px 15px;border:1px solid #46505a;background:#111820}
+.career-actions{max-width:1280px;margin:18px auto 0;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.career-actions .career-foot{margin:0;max-width:none}
+.career-start:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
+@media(max-width:1100px){.employer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.employer-picker{padding:14px}.employer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.employer-heading{flex-direction:column}.career-actions{align-items:stretch;flex-direction:column}.career-actions .career-foot{font-size:7px}}
+@media(max-width:420px){.employer-grid{grid-template-columns:1fr}}
