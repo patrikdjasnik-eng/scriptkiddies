@@ -80,7 +80,7 @@ export function parseRabbitOSState(raw: string | null, username = 'operator', ha
       updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString(),
     };
   } catch {
-    return createInitialRabbitOSState(username, hardware);
+    return createInitialRabbitOSState(username, hardware, passwordHash);
   }
 }
 
