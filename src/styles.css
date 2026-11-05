@@ -631,3 +631,20 @@ main.setup-screen{margin:0!important;position:relative;inset:auto}
 @media(max-width:440px){.rabbitos-shell{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.rabbitos-sidebar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-right:0;border-bottom:1px solid #293b38}.rabbitos-sidebar button{justify-content:center;flex-direction:column;font-size:5px;gap:3px;padding:6px 2px}.rabbitos-form-grid,.rabbitos-hardware-list{grid-template-columns:1fr}.rabbitos-file-list>article,.rabbitos-account-list>article,.rabbitos-service-list>article{gap:6px;flex-wrap:wrap}.rabbitos-foot{font-size:5px}}
 
 .rabbitos-file-preview{margin-top:10px;padding:12px;border:1px solid #526348;background:#0b1417;color:#d2e1d4}.rabbitos-file-preview>b{font:8px var(--mono);color:#c6f36a}.rabbitos-file-preview pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0 0;color:#a9bba9;font:8px/1.6 var(--mono)}.rabbitos-file-preview p{color:#ef9990;font:8px var(--mono)}
+
+
+/* RabbitOS boot gate and local login/session */
+.rabbitos-offline-banner,.rabbitos-session-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:11px 13px;border:1px solid #53634a;background:#c6f36a0d;color:#b7c8b8;font:8px var(--mono)}
+.rabbitos-offline-banner>span,.rabbitos-session-bar>span{display:flex;align-items:center;gap:8px}
+.rabbitos-offline-banner>span svg,.rabbitos-session-bar i{color:#c6f36a}
+.rabbitos-session-bar i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#a6e67b;box-shadow:0 0 8px #a6e67b}
+.rabbitos-session-bar button{padding:6px 9px;border:1px solid #4a5d50;background:#142126;color:#c6d6c8;font:7px var(--mono)}
+.rabbitos-login{max-width:440px;margin:34px auto;padding:22px;border:1px solid #435b4a;background:#111d20;display:grid;gap:13px}
+.rabbitos-login>div small{color:#c6f36a;font:7px var(--mono);letter-spacing:1px}
+.rabbitos-login h3{margin:7px 0;color:#e2ece4;font-size:18px}
+.rabbitos-login p{margin:0;color:#87998e;font-size:9px;line-height:1.6}
+.rabbitos-login label{display:grid;gap:6px;color:#9caf9f;font:8px var(--mono)}
+.rabbitos-login input{width:100%;padding:10px;background:#0b1519;border:1px solid #3a5047;color:#e2ece4;font:10px var(--mono)}
+.rabbitos-sidebar button:disabled{opacity:.35;cursor:not-allowed}
+.rabbitos-offline-banner .rabbitos-primary{flex-shrink:0}
+@media(max-width:520px){.rabbitos-offline-banner,.rabbitos-session-bar{align-items:flex-start;flex-wrap:wrap}.rabbitos-offline-banner .rabbitos-primary{width:100%}}
