@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { Activity, Cpu, Database, HardDrive, Power, RefreshCw, Server, ShieldCheck, Users, Wrench, FilePlus2, Trash2, RotateCcw, Play, Square, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { diagnoseHardware, canBootRabbitOS, parseHardwareState, serializeHardwareState } from './system/hardware';
 import {
-  addVirtualAccount, addVirtualFile, bootRabbitOS, deleteVirtualFile, parseRabbitOSState,
-  restoreVirtualFile, setServiceStatus, toggleVirtualAccount, updateFirmware,
+  addVirtualAccount, addVirtualFile, bootRabbitOS, canAccessVirtualFile, deleteVirtualFile, parseRabbitOSState,
+  restoreVirtualFile, setServiceStatus, toggleVirtualAccount, updateFirmware, updateVirtualFilePermissions,
   type RabbitOSState, type VirtualAccount
 } from './system/rabbitos';
 
@@ -22,7 +22,7 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
   const [accountRole,setAccountRole] = useState<VirtualAccount['role']>('operator');
   const [filePath,setFilePath] = useState('/home/operator/new-note.txt');
   const [fileContent,setFileContent] = useState('Nový soubor v RabbitOS.\n');
-  const [message,setMessage] = useState('');
+  const [message,setMessage] = useState('');\n  const [selectedFile,setSelectedFile] = useState<string | null>(null);
   const [firmwareDraft,setFirmwareDraft] = useState(state.hardware.firmware);
   const [hardwareDraft,setHardwareDraft] = useState(state.hardware);
 
@@ -94,7 +94,8 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
         {tab==='storage'&&<section><div className="rabbitos-heading"><div><small>VIRTUAL FILESYSTEM</small><h3>Filesystem & recovery</h3><p>Virtuální soubory mají vlastníka, skupinu, oprávnění a spotřebu místa.</p></div></div>
           <div className="rabbitos-diskbar"><span>NVMe · {state.hardware.storage.capacityGb} GB</span><b>{diskUsedMb.toFixed(1)} MB used</b></div>
           <div className="rabbitos-form-grid"><label>Absolute path<input value={filePath} onChange={e=>setFilePath(e.target.value)} placeholder="/home/operator/file.txt"/></label><label>File content<textarea value={fileContent} onChange={e=>setFileContent(e.target.value)}/></label></div><button className="rabbitos-primary" onClick={()=>{const next=addVirtualFile(state,filePath,fileContent,username);commit(next);setMessage('Požadavek na vytvoření souboru zpracován. Zkontroluj system log při odmítnutí.');}}><FilePlus2 size={14}/> CREATE FILE</button>
-          <div className="rabbitos-file-list">{state.files.filter(file=>!file.deleted).map(file=><article key={file.path}><span><b>{file.path}</b><small>{file.kind} · {file.owner}:{file.group} · {file.permissions} · {file.sizeKb} KB</small></span>{file.kind==='file'&&<button onClick={()=>{commit(deleteVirtualFile(state,file.path));setMessage('Soubor přesunut do recovery area.');}}><Trash2 size={13}/> DELETE</button>}</article>)}</div>
+          <div className="rabbitos-file-list">{state.files.filter(file=>!file.deleted).map(file=><article key={file.path}><span><b>{file.path}</b><small>{file.kind} · {file.owner}:{file.group} · {file.permissions} · {file.sizeKb} KB</small></span>{file.kind==='file'&&<><button onClick={()=>setSelectedFile(selectedFile===file.path?null:file.path)}>VIEW</button><button onClick={()=>{commit(updateVirtualFilePermissions(state,file.path,file.permissions==='rw-r-----'?'rw-------':'rw-r-----'));setMessage('Oprávnění souboru změněno a zaznamenáno.');}}>CHMOD</button><button onClick={()=>{commit(deleteVirtualFile(state,file.path));setMessage('Soubor přesunut do recovery area.');}}><Trash2 size={13}/> DELETE</button></>}</article>)}</div>
+          {selectedFile&&(()=>{const file=state.files.find(item=>item.path===selectedFile&&!item.deleted);if(!file)return null;const current=state.accounts.find(item=>item.username===username)??state.accounts[0];const allowed=current?canAccessVirtualFile(file,current,'read'):false;return <div className="rabbitos-file-preview"><b>{file.path}</b>{allowed?<pre>{file.content??'[Soubor neobsahuje textový obsah.]'}</pre>:<p>ACCESS DENIED — účet nemá oprávnění ke čtení tohoto souboru.</p>}</div>;})()}
           <h4>Recovery area</h4>{recoveredFiles.length?recoveredFiles.map(file=><article className="rabbitos-recovered" key={file.path}><span>{file.path}</span><button onClick={()=>{commit(restoreVirtualFile(state,file.path));setMessage('Soubor obnoven.');}}><RotateCcw size={13}/> RESTORE</button></article>):<p className="rabbitos-muted">Žádné odstraněné soubory.</p>}
         </section>}
         {tab==='accounts'&&<section><div className="rabbitos-heading"><div><small>LOCAL IDENTITY & ACCESS</small><h3>Users & groups</h3><p>Spravuj lokální účty a jejich herní role. Jde o simulaci oprávnění, ne o skutečné účty OS.</p></div></div>
