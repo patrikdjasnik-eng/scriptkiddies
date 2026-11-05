@@ -662,3 +662,126 @@ main.setup-screen{margin:0!important;position:relative;inset:auto}
 .rabbitos-advanced-grid .rabbitos-file-list>div{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid rgba(120,150,180,.15)}
 .rabbitos-advanced-grid .rabbitos-file-list small{display:block}
 @media(max-width:760px){.rabbitos-advanced-grid{grid-template-columns:1fr}.rabbitos-advanced{padding:10px}}
+
+
+/* RabbitOS desktop refresh — XFCE-inspired, blue desktop shell */
+.laptop-screen{background:#dbe7f3;border-color:#263b54}
+.desktop-topbar{height:34px;background:rgba(20,31,46,.94);color:#dce8f6;font:11px 'DM Mono',monospace;padding:0 14px;gap:16px}
+.desktop-topbar button{font:10px 'DM Mono',monospace;border-radius:5px;padding:6px 10px;background:#263b55;color:#e7f1ff;border:1px solid #ffffff20}
+.desktop-topbar .linux-host,.desktop-topbar .linux-clock{color:#d8e8ff}
+.desktop-area{inset:34px 0 43px;background:radial-gradient(ellipse at 72% 12%,#dceaf5a8,transparent 42%),linear-gradient(145deg,#234d78 0%,#477fae 48%,#b8cddd 100%)}
+.desktop-area:before{opacity:.12;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:34px 34px}
+.desktop-icons{top:14px;left:14px;grid-template-columns:70px;gap:10px}
+.desktop-icons button{width:66px;min-height:66px;color:#fff;text-shadow:0 1px 4px #12263e;font-family:Arial,sans-serif}
+.desktop-icons button>span{width:36px;height:32px;display:grid;place-items:center;border-radius:7px;background:linear-gradient(145deg,#f5fbff,#8cb9df);color:#28608d;filter:drop-shadow(0 3px 4px #19365255)}
+.desktop-icons button b{font:10px Arial,sans-serif;color:#fff}
+.desktop-icons button:hover,.desktop-icons button.selected{background:#e7f3ff35;border:1px solid #ffffff75}
+.desktop-mission-widget{right:15px;top:14px;width:230px;background:#172434dc;border:1px solid #a9c9e66b;border-radius:9px;padding:13px;box-shadow:0 12px 30px #19304b44}
+.desktop-mission-widget small{font-size:9px;color:#b5c9dd}.desktop-mission-widget>b{font-size:12px;color:#f5f9ff}.desktop-mission-widget>span{font-size:9px;color:#91c8ff}
+.desktop-window{left:21%;top:10%;width:67%;height:82%;min-height:270px;background:#202a37f5;border:1px solid #9db9d6;border-radius:9px;box-shadow:0 18px 50px #14283f70}
+.desktop-window-title{height:38px;flex-basis:38px;padding:0 12px;background:#29394c;color:#e7f1fb;font:10px 'DM Mono',monospace}
+.desktop-window-title button{border-radius:5px;font-size:9px;background:#304e6d;color:#dcecff;border-color:#709ac2}.desktop-window-title svg{color:#86b9e8}
+.desktop-taskbar{height:43px;background:rgba(22,33,48,.96);border-top:1px solid #d2e2f4aa;padding:0 10px;gap:7px}
+.desktop-taskbar button{height:33px;border-radius:6px;padding:0 10px;color:#d8e5f2;font:10px Arial,sans-serif}
+.desktop-taskbar button.active{background:#4b78a4;border-color:#8bb9e7;color:#fff}
+.desktop-taskbar .task-start{width:34px;justify-content:center;background:#397db7;color:white;border:1px solid #8bbbe6}.task-clock{font:9px 'DM Mono',monospace;color:#d1e0ef}
+.rabbit-menu-backdrop{position:absolute;inset:0;z-index:8;border:0;background:transparent}
+.rabbit-start-menu{position:absolute;z-index:9;left:12px;bottom:10px;width:min(410px,calc(100% - 24px));height:min(430px,calc(100% - 22px));display:flex;flex-direction:column;background:rgba(20,29,41,.97);border:1px solid #83a9d1;border-radius:9px;box-shadow:0 20px 55px #10243d99;color:#e8f1fb;overflow:hidden;backdrop-filter:blur(18px)}
+.rabbit-start-menu header{display:flex;align-items:center;gap:10px;padding:13px 15px;border-bottom:1px solid #ffffff1a}
+.rabbit-user-avatar{width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(145deg,#8fc3ee,#3475ae);font-weight:800;color:#102a44}
+.rabbit-start-menu header b,.rabbit-start-menu header small{display:block}.rabbit-start-menu header b{font:bold 13px Arial,sans-serif}.rabbit-start-menu header small{font:10px Arial,sans-serif;color:#9fb3c9;margin-top:3px}.rabbit-start-menu header>span{margin-left:auto;font:9px 'DM Mono',monospace;color:#9ee6b2}
+.rabbit-menu-body{display:grid;grid-template-columns:1fr 1fr;min-height:0;flex:1}.rabbit-menu-body nav,.rabbit-menu-shortcuts{padding:12px;overflow:auto}.rabbit-menu-body nav{border-right:1px solid #ffffff18}
+.rabbit-menu-body nav>b,.rabbit-menu-shortcuts>b{display:block;margin:0 0 8px 5px;color:#91a9c2;font:9px 'DM Mono',monospace;letter-spacing:.1em}
+.rabbit-menu-body nav button,.rabbit-menu-shortcuts button{width:100%;display:flex;align-items:center;gap:9px;text-align:left;padding:8px 7px;border:0;border-radius:5px;background:transparent;color:#dce8f5;font:11px Arial,sans-serif}
+.rabbit-menu-body nav button:hover,.rabbit-menu-shortcuts button:hover{background:#4b80b5;color:white}.rabbit-menu-body nav button span{color:#83b7e8}.rabbit-menu-shortcuts button svg{color:#91bce3}
+.rabbit-start-menu footer{display:flex;gap:8px;padding:10px;border-top:1px solid #ffffff1a}.rabbit-start-menu footer button{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #ffffff25;border-radius:5px;background:#2a3e55;color:#e4effb}.rabbit-start-menu footer button:first-child{flex:1}
+@media(max-width:700px){.desktop-window{left:3%;width:94%;top:8%;height:84%}.desktop-mission-widget{width:155px}.rabbit-start-menu{width:min(360px,calc(100% - 16px));left:8px}.rabbit-menu-body nav,.rabbit-menu-shortcuts{padding:7px}.rabbit-menu-body nav button,.rabbit-menu-shortcuts button{font-size:10px;padding:7px 4px}}
+
+
+/* RabbitOS complete visual system — blue XFCE-inspired desktop */
+:root{--rabbit-blue:#4b91d1;--rabbit-blue-dark:#203b59;--rabbit-ink:#172332;--rabbit-panel:#202b39;--rabbit-line:#49617b;--rabbit-text:#e8f1fb;--rabbit-muted:#a9bbcf}
+.game-root{min-height:100vh;background:#0c121b;color:var(--rabbit-text);font-family:Arial,Manrope,sans-serif}
+.game-global-bar{height:42px;padding:0 clamp(12px,3vw,34px);background:#172332;border-bottom:1px solid #6687a633;color:#d9e8f7;font:10px 'DM Mono',monospace;letter-spacing:.08em}
+.game-global-bar>span{display:flex;align-items:center;gap:9px}
+.global-brand-mark{width:24px;height:24px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(145deg,#a9d7ff,#3f80b7);color:#16304b;font:bold 15px Arial}
+.game-global-bar>span small{color:#8ea8c4;font-size:8px}
+.game-global-bar button{background:#263c54;border:1px solid #6687a655;color:#e4f1ff;border-radius:5px;padding:7px 11px;font:9px 'DM Mono',monospace}
+.game-global-bar button:hover{background:#37628d;border-color:#9acaff}
+.lab-intro{color:#e8f1fb}
+.lab-kicker,.lab-online span{color:#93bce3}
+.lab-online i{background:#7edca0;box-shadow:0 0 10px #7edca0}
+.career-path-context{background:#1c2c40;border-color:#5c83a9;color:#c8dcef}
+.lab-mission-card,.lab-objectives,.lab-coach{background:#172332;border-color:#3c536c;color:#e5eef8}
+.lab-mission-card:hover{border-color:#7db8ed;background:#1d3045}
+.lab-mission-card h3,.lab-objectives>div:first-child b{color:#e8f3ff}
+.lab-mission-card>div b{color:#8fc7ff}
+.lab-objectives>div.done{color:#a8e6bd}
+.lab-coach>div{color:#91c7f5}
+.lab-disclaimer{color:#8ea4ba}
+.desktop-window{color:#e7f0fa}
+.desktop-window-title{background:#29394c}
+.desktop-window input,.desktop-window textarea,.desktop-window select{accent-color:#65a9e6}
+.setup-screen{background:radial-gradient(ellipse at 50% -15%,#426d96 0,transparent 45%),linear-gradient(145deg,#111c2b,#0b121c 70%);color:#e5effa}
+.setup-frame{background:#172434;border-color:#4a6582;box-shadow:0 25px 80px #0009}
+.setup-top{background:#1e3045!important;border-bottom-color:#54708f}
+.setup-brand>span,.setup-machine-icon{background:#315d85;color:#d8edff}
+.setup-live i{background:#7edca0}
+.setup-machine{background:#1b2b3e;border-color:#3e5874}
+.setup-steps{border-color:#3c536c}
+.setup-steps>div{color:#9fb2c8}
+.setup-steps>div.active{color:#9bcfff;border-color:#78b7ed}
+.setup-steps>div.done{color:#9be0b1}
+.setup-content h1{color:#f1f7ff}
+.setup-eyebrow,.setup-content .setup-lead{color:#a9bfd6}
+.bios-menu,.bios-options,.installer-summary>div,.installer-form label,.account-form label,.finish-summary span{background:#1c2c40;border-color:#405b78;color:#dce9f7}
+.bios-menu .selected,.setup-actions button,.finish-boot{background:#3979b2;color:white;border-color:#82b8e8}
+.bios-toggle{background:#2c3e52;color:#cbdced;border-color:#58718d}
+.bios-toggle.on{background:#245d88;color:#dff1ff}
+.setup-progress{background:#263a50}.setup-progress i span{background:#69ace8}
+.setup-log{background:#101a27;border-color:#405a75;color:#b5c8dc}
+.setup-warning{background:#4a3825;color:#ffdaa0;border-color:#a27c43}
+.setup-footer{color:#8fa7c0;border-color:#3c536c}
+.career-screen{background:radial-gradient(ellipse at 50% -20%,#315c82 0,transparent 52%),linear-gradient(145deg,#111c2b,#0b121c 75%);color:#e7f1fb}
+.career-top{border-color:#3d5874}
+.career-brand>span{background:#2d5b83;color:#d7ecff;border-color:#76afe0}
+.career-brand small,.career-status,.career-kicker,.career-foot{color:#9db5ce}
+.career-status i,.career-kicker span{background:#8dcaff;box-shadow:0 0 10px #65a9e6}
+.career-hero h1 em{color:#8fc8fa}
+.career-hero p{color:#b2c4d8}
+.career-card{background:linear-gradient(145deg,#1d2c3d,#172333);border-color:#405b77;color:#e5effa}
+.career-card:hover,.career-card.chosen{background:linear-gradient(145deg,#263e57,#1b2d42);border-color:#8bc6f4;box-shadow:0 12px 35px #050c1577}
+.career-card .career-icon{background:#2d4c6b;color:#b8ddff}
+.career-card h2{color:#f1f7ff}
+.career-card p,.career-focus{color:#aec1d5}
+.career-radio{color:#9acafa}
+.career-detail,.employer-picker{background:#172638;border-color:#5a7fa4;color:#e7f1fb}
+.career-detail h3,.employer-heading h2{color:#f0f7ff}
+.career-detail p,.employer-heading p{color:#b4c7db}
+.career-tools{color:#9dcefa}
+.employer-card{background:#1c2d40;border-color:#405c78;color:#e4eef9}
+.employer-card:hover,.employer-card.chosen{background:#263e57;border-color:#8bc6f4}
+.employer-card h3,.employer-role{color:#f1f7ff}
+.employer-card p,.employer-note{color:#a9bfd5}
+.employer-salary{border-color:#49627e;color:#a9d5fb}
+.employer-salary strong{color:#a9d5fb}
+.career-actions{border-color:#3d5874}
+.career-start{background:#397db7;color:white;border:1px solid #8bc5f2;box-shadow:0 10px 30px #07132188}
+.career-start:hover{background:#4d91ca}
+.career-start:disabled{opacity:.65}
+.welcome-screen{background:radial-gradient(ellipse at 50% 0%,#315d83 0,#142235 52%,#0b121c 100%);color:#e7f1fb}
+.welcome-panel{background:#172638;border-color:#496580;box-shadow:0 25px 90px #0009}
+.welcome-header{border-color:#405a75}
+.welcome-brand>span,.welcome-card-top>span{background:#2d5276;color:#b8ddff}
+.welcome-intro p,.welcome-card p{color:#b0c3d8}
+.welcome-kicker,.welcome-card-top small{color:#9cc9f0}
+.welcome-card{background:#1d2e42;border-color:#415d79}
+.welcome-card h2{color:#eef6ff}
+.welcome-notice{background:#1b3448;border-color:#5b86a9;color:#c8e4fb}
+.welcome-footer{border-color:#405a75;color:#9eb5cc}
+.welcome-footer button{background:#397db7;color:white;border-color:#8bc5f2}
+.rabbitos-window{background:#1a293a;color:#e5effa}
+.rabbitos-sidebar{background:#152235;border-color:#3d5874}
+.rabbitos-sidebar button{color:#bfd0e2}
+.rabbitos-sidebar button.active,.rabbitos-sidebar button:hover{background:#315c83;color:white}
+.rabbitos-version{background:#315d8533;color:#9ed0ff}
+@media(max-width:760px){.game-global-bar{height:auto;min-height:42px;gap:8px;flex-wrap:wrap;padding:7px 10px}.game-global-bar>span{font-size:8px}.game-global-bar>div{gap:4px}.game-global-bar button{font-size:8px;padding:6px}.career-screen{padding:16px 12px}.career-hero{margin:30px auto 22px}.employer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.career-start{width:100%}}

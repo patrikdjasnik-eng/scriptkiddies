@@ -61,8 +61,15 @@ export default function CareerSelect({onSelect,current}:Props) {
   const employer=options.find(item=>item.id===selectedEmployer);
   const choosePath=(path:CareerPath)=>{setSelected(path);setSelectedEmployer('');};
   const initialize=()=>{
-    if(selected!=='black'&&!employer)return;
-    try{if(employer)localStorage.setItem('bh-employer-selection',JSON.stringify({careerPath:selected,...employer,selectedAt:new Date().toISOString()}));else localStorage.removeItem('bh-employer-selection');}catch{/* Workstation remains playable without storage. */}
+    try{
+      localStorage.setItem('bh-career-profile',JSON.stringify({
+        careerPath:selected,
+        employer:employer?{...employer}:null,
+        initializedAt:new Date().toISOString()
+      }));
+      if(employer)localStorage.setItem('bh-employer-selection',JSON.stringify({careerPath:selected,...employer,selectedAt:new Date().toISOString()}));
+      else localStorage.removeItem('bh-employer-selection');
+    }catch{/* Workstation remains playable without storage. */}
     onSelect(selected);
   };
   return <main className="career-screen">
@@ -71,11 +78,11 @@ export default function CareerSelect({onSelect,current}:Props) {
     <section className="career-grid">{paths.map(path=>{const Icon=path.icon;return <button key={path.id} className={'career-card '+(selected===path.id?'chosen':'')} style={{'--career':path.color} as CSSProperties} onClick={()=>choosePath(path.id)}><div className="career-card-head"><span className="career-icon"><Icon size={23}/></span><span className="career-radio">{selected===path.id?'SELECTED':'SELECT'}</span></div><small>{path.id==='black'?'FICTIONAL STORYLINE':'PROFESSIONAL SECURITY ROLE'}</small><h2>{path.name}</h2><p>{path.motto}</p><div className="career-focus">{path.focus}</div></button>})}</section>
     <section className="career-detail" style={{'--career':active.color} as React.CSSProperties}><div><div className="career-kicker"><span/> SELECTED TRAINING TRACK</div><h3>{active.name} <small>// {active.title}</small></h3><p>{active.intro}</p><div className="career-tools"><Terminal size={14}/> {active.tools}</div></div></section>
     {selected!=='black'&&<section className="employer-picker" style={{'--career':active.color} as CSSProperties}>
-      <div className="employer-heading"><div><div className="career-kicker"><span/> OPERATOR INTAKE / STEP 02</div><h2><Building2 size={20}/> Vyber si zaměstnavatele</h2><p>Vyber jednu z 10 fiktivních no-name společností. Nabídky se liší pozicí, senioritou i měsíční hrubou mzdou.</p></div><span className="employer-count">{employer?'1':'0'} / 1 VYBRÁNO</span></div>
+      <div className="employer-heading"><div><div className="career-kicker"><span/> OPERATOR INTAKE / STEP 02</div><h2><Building2 size={20}/> Vyber si zaměstnavatele</h2><p>Volitelné: vyber si fiktivního zaměstnavatele, nebo pokračuj jako nezávislý výzkumník. Výběr zaměstnavatele nemění dostupnost misí.</p></div><span className="employer-count">{employer?'1':'0'} / 1 VOLITELNÉ</span></div>
       <div className="employer-grid">{options.map((item,index)=><button type="button" key={item.id} className={'employer-card '+(selectedEmployer===item.id?'chosen':'')} onClick={()=>setSelectedEmployer(item.id)}><div className="employer-card-top"><span>{String(index+1).padStart(2,'0')} // {item.level}</span><span>{selectedEmployer===item.id?'✓ VYBRÁNO':'VYBRAT'}</span></div><h3>{item.name}</h3><b className="employer-role">{item.role}</b><p>{item.description}</p><div className="employer-salary"><Wallet size={15}/><strong>{formatSalary(item.salary)}</strong></div></button>)}</div>
       <p className="employer-note">* Fiktivní firmy a herní mzdové nabídky v CZK hrubého. Nejde o skutečné pracovní nabídky ani reálné zaměstnavatele.</p>
     </section>}
     {selected==='black'&&<div className="employer-note black-note">Black Hat je příběhový režim, nikoli profesní role — výběr zaměstnavatele se zde nepoužívá.</div>}
-    <section className="career-actions"><div className="career-foot"><span><Lock size={12}/> FICTIONAL TARGETS · ISOLATED LAB · NO EXTERNAL REQUESTS</span><span>PROFILE CAN BE CHANGED LATER</span></div><button className="career-start" disabled={selected!=='black'&&!employer} onClick={initialize}>{selected!=='black'&&!employer?'NEJPRVE VYBER FIRMU':'INITIALIZE WORKSTATION'} <ArrowRight size={17}/></button></section>
+    <section className="career-actions"><div className="career-foot"><span><Lock size={12}/> FICTIONAL TARGETS · ISOLATED LAB · NO EXTERNAL REQUESTS</span><span>PROFILE CAN BE CHANGED LATER</span></div><button className="career-start" onClick={initialize}>{employer?'INITIALIZE WORKSTATION':'POKRAČOVAT JAKO '+(selected==='black'?'STORY MODE':'INDEPENDENT RESEARCHER')} <ArrowRight size={17}/></button></section>
   </main>;
 }
