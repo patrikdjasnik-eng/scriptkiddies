@@ -26,6 +26,8 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
   const [selectedFile,setSelectedFile] = useState<string | null>(null);
   const [firmwareDraft,setFirmwareDraft] = useState(state.hardware.firmware);
   const [hardwareDraft,setHardwareDraft] = useState(state.hardware);
+  const [sessionUser,setSessionUser] = useState<string | null>(() => state.isBooted ? username : null);
+  const [loginName,setLoginName] = useState(username);
 
   const diagnostics = useMemo(() => diagnoseHardware(state.hardware),[state.hardware]);
   const usedFiles = state.files.filter(file=>file.kind==='file'&&!file.deleted);
@@ -35,6 +37,8 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
 
   const commit = (next: RabbitOSState) => {
     setState(next);
+    setFirmwareDraft(next.hardware.firmware);
+    setHardwareDraft(next.hardware);
     try { localStorage.setItem(KEY,JSON.stringify(next)); }
     catch { setMessage('Nepodařilo se uložit stav RabbitOS. Zkontroluj dostupné úložiště prohlížeče.'); }
   };
@@ -44,8 +48,10 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
       const next = bootRabbitOS(state);
       commit(next);
       setBooting(false);
-      setMessage(canBootRabbitOS(next.hardware) ? 'RabbitOS úspěšně nabootoval.' : 'POST selhal. Zkontroluj hardwarovou diagnostiku.');
-      setTab('overview');
+      const bootOk = next.isBooted;
+      setSessionUser(bootOk ? null : null);
+      setMessage(bootOk ? 'POST dokončen. Přihlas se do RabbitOS.' : 'POST selhal. RabbitOS zůstává vypnutý; zkontroluj diagnostiku.');
+      setTab(bootOk ? 'accounts' : 'overview');
     },900);
   };
   const saveFirmware = () => {
@@ -70,6 +76,22 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
       <aside className="rabbitos-sidebar">{tabs.map(({id,label,icon:Icon})=><button key={id} className={tab===id?'active':''} onClick={()=>setTab(id)}><Icon size={14}/>{label}</button>)}</aside>
       <div className="rabbitos-content">
         {message&&<div className="rabbitos-message"><span>{message}</span><button onClick={()=>setMessage('')}>×</button></div>}
+        {!state.isBooted && <div className="rabbitos-offline-banner"><Power size={14}/> RabbitOS je vypnutý. Pro práci v systému spusť POST a boot sekvenci.</div>}
+        {state.isBooted && !sessionUser && <section className="rabbitos-login">
+          <div><small>RABBITOS LOGIN MANAGER</small><h3>Přihlášení do systému</h3><p>Vyber aktivní virtuální účet. Neplatné přihlášení nezmění systémový stav.</p></div>
+          <label>Uživatelské jméno<input value={loginName} onChange={event=>setLoginName(event.target.value)} autoComplete="off"/></label>
+          <button className="rabbitos-primary" onClick={()=>{
+            const account=state.accounts.find(item=>item.username.toLowerCase()===loginName.trim().toLowerCase()&&item.enabled);
+            if(!account){setMessage('Přihlášení odmítnuto: účet neexistuje nebo je deaktivovaný.');return;}
+            setSessionUser(account.username);
+            setMessage(`Přihlášen jako ${account.username} (${account.role}).`);
+          }}>LOGIN</button>
+        </section>}
+        {state.isBooted && sessionUser && <div className="rabbitos-session-bar">
+          <span><i/> SESSION: <b>{sessionUser}</b></span>
+          <button onClick={()=>{setSessionUser(null);setMessage('Uživatel byl odhlášen.');}}>LOG OUT</button>
+          <button onClick={restart} disabled={booting}><Power size={12}/> RESTART</button>
+        </div>}
         {tab==='overview'&&<section><div className="rabbitos-heading"><div><small>RABBITOS SYSTEM OVERVIEW</small><h3>Stav systému</h3><p>Lokální administrace virtuálního notebooku a jeho herního operačního systému.</p></div><button className="rabbitos-primary" onClick={restart} disabled={booting}><RefreshCw size={14}/> {booting?'BOOTING…':'RESTART SYSTEM'}</button></div>
           <div className="rabbitos-metrics"><article><Cpu/><small>CPU</small><b>{state.hardware.cpu.model}</b><span>{state.hardware.cpu.cores} cores / {state.hardware.cpu.threads} threads</span></article><article><Database/><small>MEMORY</small><b>{state.hardware.memory.installedGb} GB {state.hardware.memory.type}</b><span>{state.hardware.memory.speedMhz} MHz</span></article><article><HardDrive/><small>SYSTEM DISK</small><b>{state.hardware.storage.capacityGb} GB</b><span>{diskUsedMb.toFixed(1)} MB used (virtual files)</span></article><article><Server/><small>SERVICES</small><b>{runningServices}/{state.services.length} running</b><span>Service manager active</span></article></div>
           <div className="rabbitos-status"><span><i className={canBootRabbitOS(state.hardware)?'ok':'bad'}/>{canBootRabbitOS(state.hardware)?'SYSTEM READY':'BOOT BLOCKED'}</span><span>BOOT COUNT: {state.bootCount}</span><span>LAST BOOT: {state.lastBootAt?new Date(state.lastBootAt).toLocaleString('cs-CZ'):'NOT RECORDED'}</span></div>
