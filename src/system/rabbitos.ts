@@ -15,6 +15,7 @@ export type RabbitOSState = {
   services: VirtualService[];
   logs: SystemLog[];
   bootCount: number;
+  isBooted: boolean;
   lastBootAt: string | null;
   updatedAt: string;
 };
@@ -51,6 +52,7 @@ export function createInitialRabbitOSState(username = 'operator', hardware: Virt
     services: structuredClone(defaultServices),
     logs: [{ id: 'log-1', at: now, level: 'INFO', source: 'boot', message: 'RabbitOS state initialized.' }],
     bootCount: 0,
+    isBooted: false,
     lastBootAt: null,
     updatedAt: now,
   };
@@ -73,6 +75,7 @@ export function parseRabbitOSState(raw: string | null, username = 'operator', ha
       services: data.services as VirtualService[],
       logs: data.logs as SystemLog[],
       bootCount: Math.max(0, Math.floor(data.bootCount)),
+      isBooted: data.isBooted === true,
       lastBootAt: typeof data.lastBootAt === 'string' ? data.lastBootAt : null,
       updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString(),
     };
@@ -95,14 +98,39 @@ export function bootRabbitOS(state: RabbitOSState): RabbitOSState {
     state.hardware.storage.systemDiskPresent,
     state.hardware.storage.usedGb <= state.hardware.storage.capacityGb,
   ];
-  if (diagnostics.some(ok => !ok)) return appendSystemLog(state, 'ERROR', 'boot', 'POST failed: hardware compatibility check did not pass.');
-  const next = { ...state, bootCount: state.bootCount + 1, lastBootAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+
+  if (diagnostics.some(ok => !ok)) {
+    const stopped = {
+      ...state,
+      isBooted: false,
+      services: state.services.map(service => ({ ...service, status: 'stopped' as const })),
+      updatedAt: new Date().toISOString(),
+    };
+    return appendSystemLog(stopped, 'ERROR', 'boot', 'POST failed: hardware compatibility check did not pass. RabbitOS remains offline.');
+  }
+
+  const services = state.services.map(service => {
+    if (!service.enabledAtBoot) return { ...service, status: 'stopped' as const };
+    if (service.id === 'vmhost' && !state.hardware.firmware.virtualization) {
+      return { ...service, status: 'stopped' as const };
+    }
+    return { ...service, status: 'running' as const };
+  });
+  const next = {
+    ...state,
+    services,
+    isBooted: true,
+    bootCount: state.bootCount + 1,
+    lastBootAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
   return appendSystemLog(next, 'INFO', 'boot', `RabbitOS boot completed (session ${next.bootCount}).`);
 }
 
 export function setServiceStatus(state: RabbitOSState, id: string, status: VirtualService['status']): RabbitOSState {
   const service = state.services.find(item => item.id === id);
   if (!service) return state;
+  if (!state.isBooted && status === 'running') return appendSystemLog(state, 'WARN', 'services', 'Service start rejected: RabbitOS is offline.');
   if (id === 'vmhost' && status === 'running' && !state.hardware.firmware.virtualization) return appendSystemLog(state, 'WARN', 'services', 'VM Host start rejected: CPU virtualization is disabled in firmware.');
   const services = state.services.map(item => item.id === id ? { ...item, status } : item);
   return appendSystemLog({ ...state, services, updatedAt: new Date().toISOString() }, 'INFO', 'services', `${service.name}: ${status}.`);
