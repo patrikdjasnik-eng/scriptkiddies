@@ -454,7 +454,7 @@
 .employer-salary strong{font:10px 'DM Mono',monospace}
 .employer-note{max-width:1280px;margin:10px auto 0;color:#788a80;font:8px/1.6 'DM Mono',monospace}
 .black-note{padding:12px 15px;border:1px solid #46505a;background:#111820}
-.career-actions{max-width:1280px;margin:18px auto 0;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.career-actions{position:sticky;bottom:0;z-index:30;max-width:1280px;margin:18px auto 0;padding:14px 0 max(14px,env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(180deg,transparent 0%,rgba(8,11,16,.94) 24%,#080b10 100%)}
 .career-actions .career-foot{margin:0;max-width:none}
 .career-start:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
 @media(max-width:1100px){.employer-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
