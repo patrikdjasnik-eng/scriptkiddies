@@ -559,3 +559,8 @@
 .finish-boot{margin-top:24px}
 .setup-footer{display:flex;justify-content:space-between;gap:12px;padding:14px 25px;border-top:1px solid #273b3b;color:#61766b;font:7px var(--mono);letter-spacing:.4px}
 @media(max-width:700px){.setup-screen{padding:0}.setup-frame{min-height:100vh;border-left:0;border-right:0}.setup-top{padding:0 14px}.setup-live{font-size:6px}.setup-machine{padding:13px 14px}.setup-machine-status{font-size:6px}.setup-steps>div{padding:10px 5px;justify-content:center;font-size:6px;gap:5px}.setup-content{padding:23px 16px}.bios-layout{grid-template-columns:1fr}.bios-menu{display:grid;grid-template-columns:repeat(2,1fr)}.bios-menu>b,.bios-menu>small{grid-column:1/-1}.bios-options>label{grid-template-columns:1fr auto}.bios-options>label>select{max-width:180px;font-size:7px}.installer-summary,.installer-form{grid-template-columns:1fr}.setup-footer{padding:12px;flex-direction:column;font-size:6px}.setup-actions>span{font-size:6px}.finish-summary{grid-template-columns:1fr 1fr}}
+
+
+/* Keep global marketing-page element styles away from the simulated setup shell */
+main.setup-screen{margin:0!important;position:relative;inset:auto}
+.setup-screen header.setup-top{position:static;top:auto;z-index:auto;backdrop-filter:none;height:68px;padding:0 25px;background:#101b20}
