@@ -50,7 +50,7 @@ The game includes a virtual operator workstation inspired by a Linux desktop env
 
 ## 🧭 Career paths
 
-The first launch begins with a specialization choice:
+The first launch begins with a training-track choice. Red, Blue and Purple are professional security team roles; Black Hat is intentionally presented as a separate fictional adversary-perspective storyline, not as a legitimate professional specialization:
 
 - 🔴 **Red Team** — offensive security workflows and vulnerability validation.
 - 🔵 **Blue Team** — incident response, log analysis and defensive investigation.
@@ -64,12 +64,12 @@ The selected track is stored locally and changes the recommended mission order. 
 The virtual laptop includes an editable workspace with local persistence:
 
 - **VS Code Lab** — create, open, edit and save files; run supported `.ps1` scripts in a restricted educational interpreter.
-- **Notepad** — write and save investigation notes.
+- **Notepad** — independent notes with automatic local draft persistence and explicit synchronization to `workspace/notes.txt`.
 - **Virtual File Explorer** — browse evidence and workspace files.
 - **PowerShell Lab** — simulated file commands such as `New-Item`, `Get-Content`, `Set-Content`, `Remove-Item` and `code`.
 - **Docker Lab** — manage fictional training images and simulated container start/stop lifecycle.
 
-These applications are functional game simulations, not replacements for native VS Code, Docker Engine or an operating-system shell. Files and container state are stored in browser local storage. No host processes, containers, network ports or external services are started.
+These applications are functional game simulations, not replacements for native VS Code, Docker Engine or an operating-system shell. Files, virtual directories, notes and container state are stored in browser local storage. The workspace supports safe file creation, directory creation, reading, writing and deletion within `workspace/`. The restricted PowerShell runner processes a documented subset of variable assignment, `Write-Host`/`Write-Output`, `Resolve-DnsName`, `Get-Content` and `pwd`; unsupported commands are reported rather than executed. Docker image names are allowlisted and the simulated lifecycle supports run, start, stop and remove. No host processes, containers, network ports or external services are started.
 
 ## 🧪 Mission labs
 
