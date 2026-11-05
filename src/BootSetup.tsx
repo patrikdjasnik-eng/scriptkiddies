@@ -19,7 +19,8 @@ export default function BootSetup({onComplete}:Props){
  const [installProgress,setInstallProgress]=useState(0);
  const [error,setError]=useState('');
  const [busy,setBusy]=useState(false);
- useEffect(()=>{if(stage!=='installing')return;const timer=window.setInterval(()=>setInstallProgress(value=>{if(value>=100){window.clearInterval(timer);setStage('account');return 100;}return Math.min(100,value+4);}),110);return()=>window.clearInterval(timer);},[stage]);
+ useEffect(()=>{if(stage!=='installing')return;const timer=window.setInterval(()=>setInstallProgress(value=>Math.min(100,value+4)),110);return()=>window.clearInterval(timer);},[stage]);
+ useEffect(()=>{if(stage==='installing'&&installProgress>=100)setStage('account');},[stage,installProgress]);
  const saveFirmware=()=>{try{localStorage.setItem('bh-firmware-settings',JSON.stringify(firmware));}catch{}setStage('installer');setError('');};
  const finishInstall=async()=>{setError('');if(!/^[a-zA-Z][a-zA-Z0-9_-]{2,19}$/.test(username)){setError('Uživatelské jméno musí mít 3–20 znaků, začínat písmenem a obsahovat jen písmena, čísla, _ nebo -.');return;}if(password.length<8){setError('Heslo musí mít alespoň 8 znaků.');return;}if(password!==confirm){setError('Hesla se neshodují.');return;}setBusy(true);try{const passwordHash=await hashPassword(password);const record:SetupRecord={installed:true,os:'RabbitOS 1.0',username,passwordHash,firmware,diskGb,edition,installedAt:new Date().toISOString()};localStorage.setItem(KEY,JSON.stringify(record));setPassword('');setConfirm('');setStage('finish');}catch{setError('Účet se nepodařilo vytvořit. Zkontroluj podporu zabezpečeného úložiště prohlížeče.');}finally{setBusy(false);}};
  return <main className="setup-screen">
