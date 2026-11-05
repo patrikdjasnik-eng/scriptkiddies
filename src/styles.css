@@ -506,3 +506,56 @@
 .shop-safety{padding:6px 10px;background:#e7edf1;color:#7d8b96;text-align:center;font:6px 'DM Mono',monospace;flex-shrink:0}
 @media(max-width:760px){.shop-window{left:2%;top:4%;width:96%;height:92%}.shop-products{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-toolbar{padding:9px}.shop-product{padding:8px}.shop-product-bottom{align-items:flex-start;flex-direction:column}.shop-checkout{align-items:stretch;flex-direction:column}.shop-checkout>button{justify-content:center}}
 @media(max-width:420px){.shop-products{grid-template-columns:1fr}.shop-product{display:grid;grid-template-columns:72px 1fr;gap:0 9px}.shop-product-art{grid-row:1/4;height:100%;min-height:75px}.shop-product h3,.shop-product p,.shop-product-bottom,.shop-quantity{grid-column:2}.shop-product h3{min-height:0}.shop-product p{min-height:0}}
+
+
+/* First power-on, UEFI setup and RabbitOS installation */
+.setup-screen{min-height:100vh;padding:30px 18px;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0%,#263a3a 0,#10191e 45%,#080d12 100%);color:#dbe7e2;font-family:Manrope,sans-serif}
+.setup-frame{width:min(980px,100%);min-height:700px;background:#0d151a;border:1px solid #3a514e;box-shadow:0 30px 100px #0009;display:flex;flex-direction:column}
+.setup-top{height:68px;padding:0 25px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #273b3b;background:#101b20}
+.setup-brand{display:flex;align-items:center;gap:11px}.setup-brand>span{width:35px;height:35px;display:grid;place-items:center;background:#c6f36a;color:#10170d;font: bold 12px var(--mono)}
+.setup-brand b,.setup-brand small{display:block}.setup-brand b{font-size:10px;letter-spacing:1.5px}.setup-brand small{margin-top:4px;color:#82968b;font:7px var(--mono);letter-spacing:1px}
+.setup-live{font:8px var(--mono);color:#91a99b}.setup-live i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#a6e67b;margin-right:7px;box-shadow:0 0 8px #a6e67b}
+.setup-machine{display:flex;align-items:center;gap:12px;padding:17px 25px;border-bottom:1px solid #273b3b;background:#0a1115}
+.setup-machine-icon{width:43px;height:35px;display:grid;place-items:center;border:1px solid #49615c;color:#c6f36a;background:#c6f36a0c}
+.setup-machine>div:nth-child(2){display:grid;gap:5px}.setup-machine>div:nth-child(2)>b{font:9px var(--mono);letter-spacing:1px}.setup-machine>div:nth-child(2)>span{font:7px var(--mono);color:#758980}
+.setup-machine-status{margin-left:auto;display:flex;align-items:center;gap:7px;color:#9bad9f;font:8px var(--mono)}
+.setup-steps{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #273b3b;background:#111c20}
+.setup-steps>div{display:flex;align-items:center;gap:9px;padding:14px 18px;color:#62756d;font:7px var(--mono);letter-spacing:.5px;border-right:1px solid #273b3b}
+.setup-steps>div:last-child{border:0}.setup-steps>div>span{width:21px;height:21px;display:grid;place-items:center;border:1px solid #43534d;border-radius:50%;font-size:8px}
+.setup-steps>div.active{color:#d9e8dc;background:#c6f36a0b}.setup-steps>div.active>span,.setup-steps>div.done>span{background:#c6f36a;color:#14200f;border-color:#c6f36a}.setup-steps>div.done{color:#a8c18e}
+.setup-content{padding:30px 34px 26px;flex:1}.setup-eyebrow{color:#c6f36a;font:8px var(--mono);letter-spacing:1.5px}
+.setup-content h1{font-size:clamp(24px,4vw,34px);letter-spacing:-1px;margin:10px 0}.setup-lead{max-width:760px;color:#91a198;font-size:11px;line-height:1.8;margin:0 0 24px}
+.bios-layout{display:grid;grid-template-columns:190px 1fr;gap:14px}
+.bios-menu{padding:14px;background:#111d21;border:1px solid #2d403f;display:flex;flex-direction:column;gap:8px}
+.bios-menu>b{font:8px var(--mono);color:#9eafa5;padding-bottom:7px;border-bottom:1px solid #2b3b39}
+.bios-menu>span{padding:9px;color:#83958b;font:8px var(--mono)}.bios-menu>span.selected{background:#c6f36a14;color:#d9efb6;border-left:2px solid #c6f36a}
+.bios-menu>small{margin-top:auto;padding-top:14px;color:#60746a;font:6px var(--mono)}
+.bios-options{display:grid;gap:9px}.bios-options>label{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 14px;border:1px solid #293b3a;background:#101a1e}
+.bios-options>label>span{display:flex;align-items:center;gap:8px;color:#d4e0d8;font-size:10px}.bios-options>label>span svg{color:#c6f36a}
+.bios-options>label>select{max-width:280px;background:#17252a;border:1px solid #425750;color:#d9e6de;padding:7px;font:8px var(--mono)}
+.bios-options>label>small{grid-column:1/-1;color:#778a80;font-size:8px;line-height:1.5}
+.bios-toggle{min-width:90px;padding:6px 9px;border:1px solid #485550;background:#1c2425;color:#a5b0a8;font:8px var(--mono)}
+.bios-toggle.on{border-color:#9bc96a;background:#c6f36a18;color:#c6f36a}
+.bios-hint{display:flex;align-items:center;gap:8px;padding:10px;color:#8da094;background:#101a1e;border:1px dashed #394b43;font-size:8px}.bios-hint svg{color:#c6f36a;flex-shrink:0}
+.setup-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;padding-top:17px;border-top:1px solid #293b39}
+.setup-actions>span{color:#6e8177;font:7px var(--mono)}
+.setup-actions button,.finish-boot{display:flex;align-items:center;gap:9px;padding:11px 15px;border:1px solid #d4ff8a;background:#c6f36a;color:#15200f;font:8px var(--mono);font-weight:bold}
+.setup-actions button:disabled{opacity:.35;cursor:not-allowed}.setup-actions .setup-back{background:transparent;border-color:#52645b;color:#a4b4aa}
+.installer-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.installer-summary>div{display:grid;grid-template-columns:28px 1fr;gap:5px 9px;padding:15px;border:1px solid #30433e;background:#111c20}
+.installer-summary svg{grid-row:1/3;color:#c6f36a}.installer-summary b{font:9px var(--mono)}.installer-summary span{font-size:8px;color:#82958a}
+.installer-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.installer-form label{display:grid;gap:7px;color:#9bad9f;font:8px var(--mono)}
+.installer-form select,.account-form input{width:100%;padding:11px;background:#111e22;border:1px solid #3b5149;color:#e1ebe4;font:9px var(--mono)}
+.setup-warning{margin-top:13px;padding:10px 12px;border:1px solid #886c38;background:#5b45151c;color:#e8c77e;font:8px/1.6 var(--mono)}
+.setup-installing{text-align:center}.setup-installing .setup-lead{margin-left:auto;margin-right:auto}.setup-spinner{width:60px;height:60px;display:grid;place-items:center;margin:18px auto;color:#c6f36a;border:1px solid #c6f36a55;border-radius:50%;animation:setup-spin 2s linear infinite}
+@keyframes setup-spin{to{transform:rotate(360deg)}}
+.setup-progress{max-width:560px;margin:28px auto;text-align:left}.setup-progress>div{display:flex;justify-content:space-between;font:8px var(--mono);color:#9bad9f}.setup-progress>div b{color:#c6f36a}.setup-progress>i{display:block;height:5px;margin-top:9px;background:#273932}.setup-progress>i span{display:block;height:100%;background:#c6f36a;transition:width .12s}
+.setup-log{max-width:560px;margin:auto;padding:14px;text-align:left;display:grid;gap:7px;background:#080f12;border:1px solid #273b36;color:#88a08f;font:8px var(--mono)}
+.account-form{max-width:520px;display:grid;gap:13px;margin:22px 0}
+.account-form label{display:grid;gap:7px}.account-form label>span{display:flex;align-items:center;gap:7px;color:#9bad9f;font:8px var(--mono)}.account-form label>span svg{color:#c6f36a}
+.account-policy{display:flex;align-items:center;gap:8px;padding:11px;background:#111d20;color:#91a196;font-size:8px}.account-policy svg{color:#c6f36a}
+.setup-success{width:66px;height:66px;display:grid;place-items:center;margin:0 0 20px;border:1px solid #c6f36a66;border-radius:50%;color:#c6f36a;background:#c6f36a10}
+.finish-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:22px 0}.finish-summary>span{display:grid;gap:6px;padding:12px;background:#111c20;border:1px solid #2d403b;color:#73877c;font:7px var(--mono)}.finish-summary b{color:#dce7de;font-size:9px}
+.finish-boot{margin-top:24px}
+.setup-footer{display:flex;justify-content:space-between;gap:12px;padding:14px 25px;border-top:1px solid #273b3b;color:#61766b;font:7px var(--mono);letter-spacing:.4px}
+@media(max-width:700px){.setup-screen{padding:0}.setup-frame{min-height:100vh;border-left:0;border-right:0}.setup-top{padding:0 14px}.setup-live{font-size:6px}.setup-machine{padding:13px 14px}.setup-machine-status{font-size:6px}.setup-steps>div{padding:10px 5px;justify-content:center;font-size:6px;gap:5px}.setup-content{padding:23px 16px}.bios-layout{grid-template-columns:1fr}.bios-menu{display:grid;grid-template-columns:repeat(2,1fr)}.bios-menu>b,.bios-menu>small{grid-column:1/-1}.bios-options>label{grid-template-columns:1fr auto}.bios-options>label>select{max-width:180px;font-size:7px}.installer-summary,.installer-form{grid-template-columns:1fr}.setup-footer{padding:12px;flex-direction:column;font-size:6px}.setup-actions>span{font-size:6px}.finish-summary{grid-template-columns:1fr 1fr}}
