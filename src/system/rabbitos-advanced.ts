@@ -7,14 +7,19 @@ export type FileAcl = { path:string; subject:string; subjectType:'user'|'group';
 export type AdvancedOSState = { version:1; disks:VirtualDisk[]; processes:VirtualProcess[]; acl:FileAcl[]; recoveryMode:boolean; bootTarget:'normal'|'recovery'|'diagnostics'; nextPid:number };
 
 export const ADVANCED_OS_KEY='bh-rabbitos-advanced-v1';
-export const createAdvancedOSState=(capacityGb=256):AdvancedOSState=>({
- version:1, disks:[{id:'disk0',label:'RabbitOS NVMe',capacityGb,gpt:true,mounted:true,partitions:[
- {id:'p1',name:'EFI System',fs:'FAT32',sizeGb:1,usedGb:.2,mountPoint:'/boot/efi',bootable:true},
- {id:'p2',name:'RabbitOS',fs:'EXT4',sizeGb:Math.max(24,Math.floor(capacityGb*.72)),usedGb:18,mountPoint:'/',bootable:true},
- {id:'p3',name:'Recovery',fs:'NTFS',sizeGb:Math.max(8,Math.floor(capacityGb*.18)),usedGb:1,mountPoint:'/recovery',bootable:false},
- {id:'p4',name:'Swap',fs:'SWAP',sizeGb:Math.max(2,capacityGb-Math.max(24,Math.floor(capacityGb*.72))-Math.max(8,Math.floor(capacityGb*.18))),usedGb:0,mountPoint:'[swap]',bootable:false}
+export const createAdvancedOSState=(capacityGb=256):AdvancedOSState=>{
+ const safeCapacity=Math.max(32,Math.floor(Number.isFinite(capacityGb)?capacityGb:256));
+ const efiGb=1, recoveryGb=Math.max(4,Math.floor(safeCapacity*.12)), swapGb=Math.max(2,Math.floor(safeCapacity*.05));
+ const rootGb=safeCapacity-efiGb-recoveryGb-swapGb;
+ return {
+ version:1, disks:[{id:'disk0',label:'RabbitOS NVMe',capacityGb:safeCapacity,gpt:true,mounted:true,partitions:[
+ {id:'p1',name:'EFI System',fs:'FAT32',sizeGb:efiGb,usedGb:.2,mountPoint:'/boot/efi',bootable:true},
+ {id:'p2',name:'RabbitOS',fs:'EXT4',sizeGb:rootGb,usedGb:Math.min(18,rootGb),mountPoint:'/',bootable:true},
+ {id:'p3',name:'Recovery',fs:'NTFS',sizeGb:recoveryGb,usedGb:1,mountPoint:'/recovery',bootable:false},
+ {id:'p4',name:'Swap',fs:'SWAP',sizeGb:swapGb,usedGb:0,mountPoint:'[swap]',bootable:false}
  ]}],processes:[{pid:1,name:'rabbit-init',serviceId:'systemd',cpuPercent:1.2,memoryMb:42,state:'running'},{pid:2,name:'networkd',serviceId:'network',cpuPercent:.4,memoryMb:68,state:'running'},{pid:3,name:'auditd',serviceId:'auditd',cpuPercent:.2,memoryMb:31,state:'running'}],acl:[],recoveryMode:false,bootTarget:'normal',nextPid:4
-});
+ };
+};
 export function parseAdvancedOSState(raw:string|null,capacityGb=256):AdvancedOSState {
  try { const v=raw?JSON.parse(raw):null; if(v?.version===1&&Array.isArray(v.disks)&&Array.isArray(v.processes)&&Array.isArray(v.acl)&&['normal','recovery','diagnostics'].includes(v.bootTarget)) return v as AdvancedOSState; } catch {}
  return createAdvancedOSState(capacityGb);
