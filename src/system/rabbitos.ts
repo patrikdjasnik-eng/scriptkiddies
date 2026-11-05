@@ -1,4 +1,4 @@
-import { createInitialHardwareState, type VirtualHardware, type FirmwareSettings, DEFAULT_HARDWARE } from './hardware';
+import { type VirtualHardware, type FirmwareSettings, DEFAULT_HARDWARE } from './hardware';
 
 export const RABBITOS_STATE_KEY = 'bh-rabbitos-state';
 export const RABBITOS_SCHEMA_VERSION = 1;
