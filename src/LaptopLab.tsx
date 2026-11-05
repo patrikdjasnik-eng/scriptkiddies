@@ -109,7 +109,7 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   const [shopCategory,setShopCategory]=useState('VŠE');
   const [shopCart,setShopCart]=useState<Record<string,number>>(()=>{try{return JSON.parse(localStorage.getItem('bh-shop-cart')??'{}');}catch{return {};}});
   const [shopOrders,setShopOrders]=useState<ShopOrder[]>(()=>{try{return JSON.parse(localStorage.getItem('bh-shop-orders')??'[]');}catch{return [];}});
-  const [shopBalance,setShopBalance]=useState(()=>{try{const value=Number(localStorage.getItem('bh-shop-balance'));return Number.isFinite(value)&&value>=0?value:250000;}catch{return 250000;}});
+  const [shopBalance,setShopBalance]=useState(()=>{try{const saved=localStorage.getItem('bh-shop-balance');if(saved===null)return 250000;const value=Number(saved);return Number.isFinite(value)&&value>=0?value:250000;}catch{return 250000;}});
   const [notice, setNotice] = useState('');
   const shopProducts:ShopProduct[]=[
     {id:'pi5-8gb',name:'Raspberry Pi 5 · 8 GB',category:'MINI PC',price:3990,specs:'Quad-core ARM · 8 GB RAM · GPIO · lab automation',icon:'pi'},
