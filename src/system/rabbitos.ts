@@ -153,3 +153,22 @@ export function restoreVirtualFile(state: RabbitOSState, path: string): RabbitOS
   if (!file) return state;
   return appendSystemLog({ ...state, files: state.files.map(item => item.path === path ? { ...item, deleted: false } : item) }, 'INFO', 'filesystem', `Restored ${path}.`);
 }
+
+
+/** Unix-like permission check for the local game identity. */
+export function canAccessVirtualFile(file: VirtualFile, account: VirtualAccount, action: 'read' | 'write' | 'execute'): boolean {
+  if (!account.enabled) return false;
+  if (account.role === 'administrator' || account.groups.includes('wheel')) return true;
+  const offset = file.owner === account.username ? 0 : account.groups.includes(file.group) ? 3 : 6;
+  const index = offset + (action === 'read' ? 0 : action === 'write' ? 1 : 2);
+  return file.permissions[index] === (action === 'read' ? 'r' : action === 'write' ? 'w' : 'x');
+}
+
+export function updateVirtualFilePermissions(state: RabbitOSState, path: string, permissions: string): RabbitOSState {
+  if (!/^[r-][w-][x-][r-][w-][x-][r-][w-][x-]$/.test(permissions)) {
+    return appendSystemLog(state, 'WARN', 'filesystem', `Invalid permissions for "${path}".`);
+  }
+  const file = state.files.find(item => item.path === path && !item.deleted);
+  if (!file || file.kind !== 'file') return state;
+  return appendSystemLog({ ...state, files: state.files.map(item => item.path === path ? { ...item, permissions } : item) }, 'INFO', 'filesystem', `Permissions changed for ${path} to ${permissions}.`);
+}
