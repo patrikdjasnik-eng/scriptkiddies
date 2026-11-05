@@ -22,7 +22,8 @@ export default function RabbitOSPanel({ username = 'operator' }: Props) {
   const [accountRole,setAccountRole] = useState<VirtualAccount['role']>('operator');
   const [filePath,setFilePath] = useState('/home/operator/new-note.txt');
   const [fileContent,setFileContent] = useState('Nový soubor v RabbitOS.\n');
-  const [message,setMessage] = useState('');\n  const [selectedFile,setSelectedFile] = useState<string | null>(null);
+  const [message,setMessage] = useState('');
+  const [selectedFile,setSelectedFile] = useState<string | null>(null);
   const [firmwareDraft,setFirmwareDraft] = useState(state.hardware.firmware);
   const [hardwareDraft,setHardwareDraft] = useState(state.hardware);
 
