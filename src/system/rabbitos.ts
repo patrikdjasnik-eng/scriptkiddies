@@ -3,7 +3,7 @@ import { type VirtualHardware, type FirmwareSettings, DEFAULT_HARDWARE } from '.
 export const RABBITOS_STATE_KEY = 'bh-rabbitos-state';
 export const RABBITOS_SCHEMA_VERSION = 1;
 
-export type VirtualAccount = { id: string; username: string; role: 'administrator' | 'operator' | 'analyst'; groups: string[]; enabled: boolean; createdAt: string };
+export type VirtualAccount = { id: string; username: string; passwordHash?: string; role: 'administrator' | 'operator' | 'analyst'; groups: string[]; enabled: boolean; createdAt: string };
 export type VirtualFile = { path: string; kind: 'file' | 'directory'; sizeKb: number; owner: string; group: string; permissions: string; content?: string; deleted?: boolean };
 export type VirtualService = { id: string; name: string; description: string; status: 'running' | 'stopped'; enabledAtBoot: boolean; memoryMb: number };
 export type SystemLog = { id: string; at: string; level: 'INFO' | 'WARN' | 'ERROR'; source: string; message: string };
@@ -42,12 +42,12 @@ const defaultServices: VirtualService[] = [
   { id: 'update', name: 'Update Scheduler', description: 'Plánovač herních aktualizací a údržby.', status: 'running', enabledAtBoot: true, memoryMb: 16 },
 ];
 
-export function createInitialRabbitOSState(username = 'operator', hardware: VirtualHardware = DEFAULT_HARDWARE): RabbitOSState {
+export function createInitialRabbitOSState(username = 'operator', hardware: VirtualHardware = DEFAULT_HARDWARE, passwordHash?: string): RabbitOSState {
   const now = new Date().toISOString();
   return {
     schemaVersion: RABBITOS_SCHEMA_VERSION,
     hardware: structuredClone(hardware),
-    accounts: [{ id: 'user-1', username, role: 'administrator', groups: ['users', 'wheel', 'adm'], enabled: true, createdAt: now }],
+    accounts: [{ id: 'user-1', username, ...(passwordHash ? { passwordHash } : {}), role: 'administrator', groups: ['users', 'wheel', 'adm'], enabled: true, createdAt: now }],
     files: structuredClone(initialFiles),
     services: structuredClone(defaultServices),
     logs: [{ id: 'log-1', at: now, level: 'INFO', source: 'boot', message: 'RabbitOS state initialized.' }],
@@ -60,13 +60,13 @@ export function createInitialRabbitOSState(username = 'operator', hardware: Virt
 
 const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
-export function parseRabbitOSState(raw: string | null, username = 'operator', hardware: VirtualHardware = DEFAULT_HARDWARE): RabbitOSState {
-  if (!raw) return createInitialRabbitOSState(username, hardware);
+export function parseRabbitOSState(raw: string | null, username = 'operator', hardware: VirtualHardware = DEFAULT_HARDWARE, passwordHash?: string): RabbitOSState {
+  if (!raw) return createInitialRabbitOSState(username, hardware, passwordHash);
   try {
     const data: unknown = JSON.parse(raw);
     if (!isObject(data) || data.schemaVersion !== RABBITOS_SCHEMA_VERSION ||
       !Array.isArray(data.accounts) || !Array.isArray(data.files) || !Array.isArray(data.services) || !Array.isArray(data.logs) ||
-      !isObject(data.hardware) || typeof data.bootCount !== 'number') return createInitialRabbitOSState(username, hardware);
+      !isObject(data.hardware) || typeof data.bootCount !== 'number') return createInitialRabbitOSState(username, hardware, passwordHash);
     return {
       schemaVersion: RABBITOS_SCHEMA_VERSION,
       hardware: data.hardware as unknown as VirtualHardware,
@@ -140,11 +140,11 @@ export function updateFirmware(state: RabbitOSState, firmware: FirmwareSettings)
   return appendSystemLog({ ...state, hardware: { ...state.hardware, firmware }, updatedAt: new Date().toISOString() }, 'WARN', 'firmware', 'Firmware configuration changed; restart required to apply.');
 }
 
-export function addVirtualAccount(state: RabbitOSState, username: string, role: VirtualAccount['role']): RabbitOSState {
+export function addVirtualAccount(state: RabbitOSState, username: string, role: VirtualAccount['role'], passwordHash?: string): RabbitOSState {
   if (!/^[a-zA-Z][a-zA-Z0-9_-]{2,19}$/.test(username) || state.accounts.some(user => user.username.toLowerCase() === username.toLowerCase())) {
     return appendSystemLog(state, 'WARN', 'accounts', `Account creation rejected for "${username}".`);
   }
-  const account: VirtualAccount = { id: `user-${Date.now()}`, username, role, groups: role === 'administrator' ? ['users', 'wheel', 'adm'] : role === 'analyst' ? ['users', 'analysts'] : ['users'], enabled: true, createdAt: new Date().toISOString() };
+  const account: VirtualAccount = { id: `user-${Date.now()}`, username, ...(passwordHash ? { passwordHash } : {}), role, groups: role === 'administrator' ? ['users', 'wheel', 'adm'] : role === 'analyst' ? ['users', 'analysts'] : ['users'], enabled: true, createdAt: new Date().toISOString() };
   return appendSystemLog({ ...state, accounts: [...state.accounts, account], updatedAt: new Date().toISOString() }, 'INFO', 'accounts', `Account "${username}" created as ${role}.`);
 }
 
