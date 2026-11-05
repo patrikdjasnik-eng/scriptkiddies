@@ -76,6 +76,6 @@ export default function CareerSelect({onSelect,current}:Props) {
       <p className="employer-note">* Fiktivní firmy a herní mzdové nabídky v CZK hrubého. Nejde o skutečné pracovní nabídky ani reálné zaměstnavatele.</p>
     </section>}
     {selected==='black'&&<div className="employer-note black-note">Black Hat je příběhový režim, nikoli profesní role — výběr zaměstnavatele se zde nepoužívá.</div>}
-    <section className="career-actions"><div className="career-foot"><span><Lock size={12}/> FICTIONAL TARGETS · ISOLATED LAB · NO EXTERNAL REQUESTS</span><span>PROFILE CAN BE CHANGED LATER</span></div><button className="career-start" disabled={selected!=='black'&&!employer} onClick={initialize}>{selected!=='black'&&!employer?'NEJPRVE VYBER FIRMU':'INITIALIZE WORKSTATION'} <ArrowRight size={17}/></button></section>
+    <section className="career-actions" aria-label="Dokončení výběru kariéry"><div className="career-foot"><span><Lock size={12}/> FICTIONAL TARGETS · ISOLATED LAB · NO EXTERNAL REQUESTS</span><span>PROFILE CAN BE CHANGED LATER</span></div><button type="button" className="career-start" disabled={selected!=='black'&&!employer} onClick={initialize}>{selected!=='black'&&!employer?'NEJPRVE VYBER FIRMU':'POKRAČOVAT DO PRACOVNÍ STANICE'} <ArrowRight size={17}/></button></section>
   </main>;
 }
