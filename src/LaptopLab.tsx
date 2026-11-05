@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X, Volume2, BatteryFull, Grid3X3, Container, Save, FilePlus2, StickyNote, Trash2, ShoppingBag, ShoppingCart, Cpu, Laptop, Package, Plus, Minus, Wrench } from 'lucide-react';
+import { Activity, BookOpen, Bug, CheckCircle2, Code2, FileText, Folder, Globe2, HardDrive, Monitor, Network, Play, Power, Search, ShieldCheck, Terminal, Wifi, X, Volume2, BatteryFull, Grid3X3, Container, Save, FilePlus2, FolderPlus, StickyNote, Trash2, ShoppingBag, ShoppingCart, Cpu, Laptop, Package, Plus, Minus, Wrench } from 'lucide-react';
 import type { CareerPath } from './CareerSelect';
 import RabbitOSPanel from './RabbitOSPanel';
 
@@ -168,7 +168,7 @@ export default function LaptopLab({ lang, careerPath='red' }: { lang: 'cs' | 'en
   useEffect(()=>{try{localStorage.setItem('bh-shop-cart',JSON.stringify(shopCart));localStorage.setItem('bh-shop-orders',JSON.stringify(shopOrders));localStorage.setItem('bh-shop-balance',String(shopBalance));}catch{/* Shop remains usable for this session. */}},[shopCart,shopOrders,shopBalance]);
   const saveWorkspaceFile=()=>{setWorkspaceFiles(old=>({...old,[activeWorkspaceFile]:workspaceDraft}));setNotice('Uloženo: '+activeWorkspaceFile);};
   const createWorkspaceDirectory=(raw:string)=>{const path=raw.trim().replace(/\\/g,'/').replace(/\/$/,'');if(!/^workspace(?:\/[a-zA-Z0-9._-]+)*$/.test(path)||path.split('/').some(part=>part==='.'||part==='..')){add({text:'Neplatná cesta. Adresáře musí být uvnitř workspace/.',tone:'error'});return;}if(workspaceDirs.includes(path)){add({text:'Adresář již existuje: '+path,tone:'warn'});return;}const parts=path.split('/');const dirs=parts.map((_,i)=>parts.slice(0,i+1).join('/'));setWorkspaceDirs(old=>Array.from(new Set([...old,...dirs])));add({text:'Adresář vytvořen: '+path,tone:'good'});};
-  const openWorkspaceFile=(path:string)=>{setActiveWorkspaceFile(path);setWorkspaceDraft(workspaceFiles[path]??'');setActiveApp('vscode');};
+  const openWorkspaceFile=(path:string)=>{setActiveWorkspaceFile(path);setWorkspaceDraft(workspaceFiles[path]??'');setActiveApp('vscode');setOpenApps(old=>old.includes('vscode')?old:[...old,'vscode']);};
   const fileManagerEntries=useMemo(()=>{
     const prefix=fileManagerPath==='workspace'?'workspace/':fileManagerPath+'/';
     const dirs=workspaceDirs.filter(path=>path!==fileManagerPath&&path.startsWith(prefix)&&!path.slice(prefix.length).includes('/')).map(path=>({path,name:path.slice(prefix.length),kind:'directory' as const}));
