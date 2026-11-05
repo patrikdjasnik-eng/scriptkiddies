@@ -68,7 +68,7 @@ export function parseHardwareState(raw: string | null): HardwareState {
     }
     const h = parsed.hardware;
     const cpu = h.cpu, board = h.motherboard, memory = h.memory, gpu = h.gpu, storage = h.storage, power = h.power, firmware = h.firmware;
-    if (![cpu, board, memory, gpu, storage, power, firmware].every(isRecord)) return createInitialHardwareState();
+    if (!isRecord(cpu) || !isRecord(board) || !isRecord(memory) || !isRecord(gpu) || !isRecord(storage) || !isRecord(power) || !isRecord(firmware)) return createInitialHardwareState();
     if (typeof cpu.model !== 'string' || !boundedNumber(cpu.cores, 1, 128) || !boundedNumber(cpu.threads, 1, 256) || typeof cpu.socket !== 'string' || !boundedNumber(cpu.baseClockGhz, 0.1, 20)) return createInitialHardwareState();
     if (typeof board.model !== 'string' || typeof board.socket !== 'string' || !['DDR4', 'DDR5'].includes(String(board.memoryType)) || !boundedNumber(board.maxMemoryGb, 4, 4096) || !boundedNumber(board.pcieGeneration, 1, 8)) return createInitialHardwareState();
     if (!boundedNumber(memory.installedGb, 1, 4096) || !['DDR4', 'DDR5'].includes(String(memory.type)) || !boundedNumber(memory.speedMhz, 400, 20000)) return createInitialHardwareState();
