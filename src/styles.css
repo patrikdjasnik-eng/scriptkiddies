@@ -785,3 +785,26 @@ main.setup-screen{margin:0!important;position:relative;inset:auto}
 .rabbitos-sidebar button.active,.rabbitos-sidebar button:hover{background:#315c83;color:white}
 .rabbitos-version{background:#315d8533;color:#9ed0ff}
 @media(max-width:760px){.game-global-bar{height:auto;min-height:42px;gap:8px;flex-wrap:wrap;padding:7px 10px}.game-global-bar>span{font-size:8px}.game-global-bar>div{gap:4px}.game-global-bar button{font-size:8px;padding:6px}.career-screen{padding:16px 12px}.career-hero{margin:30px auto 22px}.employer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.career-start{width:100%}}
+
+
+/* Functional virtual file manager */
+.files-window{display:flex;flex-direction:column;overflow:hidden}
+.files-window>.desktop-window-title{flex-shrink:0}
+.files-window>.desktop-window-title>div{display:flex;gap:5px}
+.files-window>.desktop-window-title button{display:flex;align-items:center;gap:5px;padding:5px 8px}
+.file-manager-breadcrumb{display:flex;align-items:center;gap:5px;min-height:34px;padding:5px 12px;background:#1a2a3d;border-bottom:1px solid #405b77;color:#dceafa}
+.file-manager-breadcrumb button{border:0;background:transparent;color:#a9d4fa;font-size:11px;padding:4px}
+.file-manager-breadcrumb button:hover{text-decoration:underline}
+.file-manager-breadcrumb span{margin-left:auto;color:#91a8c1;font:10px 'DM Mono',monospace}
+.file-manager-list{flex:1;min-height:0;overflow:auto;padding:9px 12px}
+.file-manager-entry{display:flex;align-items:center;gap:8px;width:100%;min-height:34px;padding:4px 7px;border:0;border-bottom:1px solid #ffffff12;background:transparent;color:#e2edf9;text-align:left}
+.file-manager-entry>button:first-child{display:flex;align-items:center;gap:9px;flex:1;min-width:0;border:0;background:transparent;color:inherit;text-align:left}
+.file-manager-entry svg{flex-shrink:0;color:#9bcafa}
+.file-manager-entry span{overflow:hidden;text-overflow:ellipsis}
+.file-manager-entry small{margin-left:auto;color:#8fa7c0;font-size:10px}
+.file-manager-entry:hover{background:#315d853d}
+.file-manager-entry .file-manager-delete{display:grid;place-items:center;width:28px;height:26px;border:0;border-radius:5px;background:transparent;color:#f2a4a4}
+.file-manager-entry .file-manager-delete:hover{background:#a33b3b55}
+.file-manager-empty{padding:24px;text-align:center;color:#9eb2c9;font-size:12px}
+.files-window .file-evidence{flex-shrink:0;max-height:115px;overflow:auto;margin:0;padding:9px 12px;background:#172638;border-top:1px solid #405b77}
+@media(max-width:600px){.files-window>.desktop-window-title{height:auto;min-height:38px;flex-wrap:wrap;padding:6px}.files-window>.desktop-window-title>div{flex-wrap:wrap}.file-manager-entry{min-height:40px}}
